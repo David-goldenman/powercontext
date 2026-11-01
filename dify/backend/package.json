@@ -1,0 +1,16 @@
+{
+  "name": "fusion-lab-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "离谱发明工坊 — seekdb 数据层（Dify 通过 HTTP Request 节点调用）",
+  "scripts": {
+    "start": "node server.mjs",
+    "seed": "node seed.mjs",
+    "reset": "node seed.mjs --reset"
+  },
+  "dependencies": {
+    "mysql2": "^3.24.6",
+    "seekdb": "1.4.0"
+  }
+}

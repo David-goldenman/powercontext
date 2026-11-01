@@ -1,0 +1,65 @@
+# seekdb 实际数据核对
+# 采集时间: 2026-11-02 02:15:00 CST
+# 实例: 5.7.25-OceanBase seekdb-v1.4.0.0
+# 用途: 证明 seekdb 在应用中承担图鉴的存储与检索，非仅安装
+
+## 1. 图鉴总数
+total
+25
+
+## 2. 表结构与索引（ngram 全文 + 两个结构化索引）
+*************************** 1. row ***************************
+       Table: fusions
+Create Table: CREATE TABLE `fusions` (
+  `id` varchar(64) NOT NULL,
+  `item_a` varchar(40) NOT NULL,
+  `item_b` varchar(40) NOT NULL,
+  `name` varchar(80) NOT NULL,
+  `effect` varchar(400) NOT NULL,
+  `side_effect` varchar(400) NOT NULL DEFAULT '',
+  `rarity` varchar(10) NOT NULL DEFAULT '普通',
+  `creator` varchar(40) NOT NULL DEFAULT '匿名发明家',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  FULLTEXT KEY `ft_content` (`name`, `effect`) WITH PARSER ngram PARSER_PROPERTIES=(ngram_token_size=2) BLOCK_SIZE 16384,
+  KEY `idx_a` (`item_a`) BLOCK_SIZE 16384 LOCAL,
+  KEY `idx_b` (`item_b`) BLOCK_SIZE 16384 LOCAL
+) ORGANIZATION INDEX DEFAULT CHARSET = utf8mb4 ROW_FORMAT = DYNAMIC COMPRESSION = 'zstd_1.3.8' BLOCK_SIZE = 16384 TABLET_SIZE = 134217728 PCTFREE = 0
+
+## 3. 最新写入的 6 条（含应用运行过程中新增的发明）
+id	item_a	item_b	name	rarity	created_at
+f_1793556864738_xlc70p	面条	路由器	拉面信号增强碗	稀有	2026-11-02 02:14:32
+f_1793556857334_jidys7	拖鞋	无人机	拖鞋巡洋舰	史诗	2026-11-01 00:00:00
+f_1793556857340_3n24u5	闹钟	愧疚感	道德叫醒服务	史诗	2026-11-01 00:00:00
+f_1793556857337_r90q6n	保温杯	尖叫	情绪储蓄罐	稀有	2026-11-01 00:00:00
+f_1793556857343_scm02i	眼镜	读心术	社交雷达	史诗	2026-11-01 00:00:00
+f_1793556857347_l3ta3g	蓝牙耳机	猫	反向遛猫器	稀有	2026-11-01 00:00:00
+
+## 4. 按稀有度分布
+rarity	n
+史诗	7
+传说	6
+稀有	6
+普通	6
+
+## 5. 精确查重（不区分物品顺序）—— 对应工作流「查图鉴历史」节点
+SQL: SELECT id,name FROM fusions WHERE (item_a='猫' AND item_b='微波炉') OR (item_a='微波炉' AND item_b='猫');
+id	name	rarity	effect
+f_1793556857323_pfvibq	猫波炉	传说	把猫放进微波炉，会得到一台会自己加热的机器
+
+## 6. ngram 全文索引命中 —— 对应相似召回
+SQL: ... WHERE MATCH(name,effect) AGAINST('加热' IN NATURAL LANGUAGE MODE)
+id	name	score
+f_1793556857323_pfvibq	猫波炉	1.9527024802233188
+
+SQL: ... WHERE MATCH(name,effect) AGAINST('漂白' IN NATURAL LANGUAGE MODE)
+id	name	score
+f_1793556857405_w5xqzw	洗白机	2.011088933120362
+
+## 7. 结构化 + 全文组合（相似检索的实际形态）
+SQL: 输入「拖鞋 + 洗衣机」时的相似召回
+name	item_a	item_b	struct_score	ft_score
+拖鞋巡洋舰	拖鞋	无人机	1	2.7704245714838853
+通勤洗衣一体机	自行车	洗衣机	1	1.7495311238995055
+三分钟出面机	泡面	洗衣机	1	0
+洗白机	洗衣机	谎言	1	0

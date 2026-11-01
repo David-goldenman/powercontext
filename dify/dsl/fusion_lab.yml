@@ -1,0 +1,631 @@
+app:
+  name: 离谱发明工坊
+  mode: advanced-chat
+  icon: ⚗️
+  icon_background: '#FFF4ED'
+  description: 塞两件日常物品进去，现场发明一件没人要的东西。图鉴的存储与检索由 seekdb 承担。
+workflow:
+  graph:
+    nodes:
+    - id: start
+      type: custom
+      data:
+        type: start
+        title: 开始
+        variables: []
+      position:
+        x: 40
+        y: 320
+      targetPosition: left
+      sourcePosition: right
+      positionAbsolute:
+        x: 40
+        y: 320
+    - id: parse
+      type: custom
+      data:
+        type: code
+        title: 解析两件物品
+        code_language: python3
+        code: "import re\n\ndef main(query: str) -> dict:\n    t = (query or \"\").strip()\n    t = re.sub(r\"[\\s,，、;；/\\|]+\", \" \", t)\n    t = re.sub(r\"(和|与|跟|加上|加|配上|配|塞进|丢进|扔进|放进|混入|结合|融合|并|\\+|＝|=)\"\
+          , \" \", t)\n    parts = []\n    for p in t.split():\n        p = p.strip(\" 　.,，。!！?？\\\"'“”\")\n        if p:\n            parts.append(p)\n    seen, items = set(), []\n    for p in parts:\n\
+          \        if p not in seen:\n            seen.add(p)\n            items.append(p)\n    a = items[0] if items else \"\"\n    b = items[1] if len(items) > 1 else \"\"\n    return {\"item_a\": a[:20],\
+          \ \"item_b\": b[:20], \"valid\": bool(a and b)}\n"
+        variables:
+        - variable: query
+          value_selector:
+          - sys
+          - query
+        outputs:
+          item_a: &id001
+            type: string
+            children: null
+          item_b: *id001
+          valid: &id002
+            type: boolean
+            children: null
+      position:
+        x: 300
+        y: 320
+      targetPosition: left
+      sourcePosition: right
+      positionAbsolute:
+        x: 300
+        y: 320
+    - id: if_valid
+      type: custom
+      data:
+        type: if-else
+        title: 两件都齐了吗
+        logical_operator: and
+        cases:
+        - case_id: 'true'
+          logical_operator: and
+          conditions:
+          - variable_selector:
+            - parse
+            - valid
+            comparison_operator: is
+            value: 'true'
+            sub_variable_condition: null
+      position:
+        x: 560
+        y: 320
+      targetPosition: left
+      sourcePosition: right
+      positionAbsolute:
+        x: 560
+        y: 320
+    - id: ask
+      type: custom
+      data:
+        type: answer
+        title: 提示补一件
+        variables: []
+        answer: '要有两件东西才能开炉。
+
+
+          比如：**猫 + 微波炉**、**拖鞋 + 无人机**。
+
+          再补一件？'
+      position:
+        x: 820
+        y: 580
+      targetPosition: left
+      sourcePosition: right
+      positionAbsolute:
+        x: 820
+        y: 580
+    - id: lookup
+      type: custom
+      data:
+        type: http-request
+        title: 查图鉴历史
+        method: post
+        url: http://172.30.224.1:3000/lookup
+        authorization:
+          type: no-auth
+          config: null
+        headers: Content-Type:application/json
+        params: ''
+        body:
+          type: json
+          data:
+          - key: ''
+            type: text
+            value: '{"a":"{{#parse.item_a#}}","b":"{{#parse.item_b#}}"}'
+            file: []
+        timeout:
+          max_connect_timeout: 10
+          max_read_timeout: 30
+          max_write_timeout: 30
+        ssl_verify: false
+        variables: []
+        retry_config:
+          retry_enabled: true
+          max_retries: 2
+          retry_interval: 1000
+      position:
+        x: 820
+        y: 120
+      targetPosition: left
+      sourcePosition: right
+      positionAbsolute:
+        x: 820
+        y: 120
+    - id: parse_lookup
+      type: custom
+      data:
+        type: code
+        title: 读检索结果
+        code_language: python3
+        code: "import json\n\ndef main(resp: str) -> dict:\n    try:\n        d = json.loads(resp or \"{}\")\n    except Exception:\n        d = {}\n    ex = d.get(\"exact\") or {}\n    sims = d.get(\"\
+          similar\") or []\n    return {\n        \"exact_hit\": bool(d.get(\"exact_hit\")) and bool(ex.get(\"name\")),\n        \"exact_name\": str(ex.get(\"name\") or \"\"),\n        \"exact_effect\"\
+          : str(ex.get(\"effect\") or \"\"),\n        \"exact_side\": str(ex.get(\"side_effect\") or \"\"),\n        \"exact_rarity\": str(ex.get(\"rarity\") or \"\"),\n        \"similar_json\": json.dumps(sims,\
+          \ ensure_ascii=False),\n    }\n"
+        variables:
+        - variable: resp
+          value_selector:
+          - lookup
+          - body
+        outputs:
+          exact_hit: *id002
+          exact_name: *id001
+          exact_effect: *id001
+          exact_side: *id001
+          exact_rarity: *id001
+          similar_json: *id001
+      position:
+        x: 1080
+        y: 120
+      targetPosition: left
+      sourcePosition: right
+      positionAbsolute:
+        x: 1080
+        y: 120
+    - id: if_hit
+      type: custom
+      data:
+        type: if-else
+        title: 图鉴里有吗
+        logical_operator: and
+        cases:
+        - case_id: 'true'
+          logical_operator: and
+          conditions:
+          - variable_selector:
+            - parse_lookup
+            - exact_hit
+            comparison_operator: is
+            value: 'true'
+            sub_variable_condition: null
+      position:
+        x: 1340
+        y: 120
+      targetPosition: left
+      sourcePosition: right
+      positionAbsolute:
+        x: 1340
+        y: 120
+    - id: compose_hit
+      type: custom
+      data:
+        type: code
+        title: 组装已有条目
+        code_language: python3
+        code: "import json\n\ndef main(item_a: str, item_b: str, name: str, effect: str, side: str, rarity: str,\n         similar_json: str) -> dict:\n    try:\n        sims = json.loads(similar_json or\
+          \ \"[]\")\n    except Exception:\n        sims = []\n    extra = \"\"\n    if sims:\n        picks = \"、\".join(\"「{}」\".format(s.get(\"name\")) for s in sims[:2])\n        extra = \"\\n\\n（图鉴边上有人小声说：这个思路有点像\
+          \ \" + picks + \"。）\"\n\n    reply = (\n        \"### 图鉴已有：\" + name + \"\\n\\n\"\n        \"**\" + item_a + \" + \" + item_b + \"** 这组配方早就被人试过了，稀有度 \" + rarity + \"。\\n\\n\"\n        \"效果：\"\
+          \ + effect + \"\\n\\n\"\n        \"副作用：\" + side + extra + \"\\n\\n\"\n        \"---\\n\\n\"\n        \"换两件别的东西试试，说不定能造出还没人想到的。\"\n    )\n    return {\"reply\": reply}\n"
+        variables:
+        - variable: item_a
+          value_selector:
+          - parse
+          - item_a
+        - variable: item_b
+          value_selector:
+          - parse
+          - item_b
+        - variable: name
+          value_selector:
+          - parse_lookup
+          - exact_name
+        - variable: effect
+          value_selector:
+          - parse_lookup
+          - exact_effect
+        - variable: side
+          value_selector:
+          - parse_lookup
+          - exact_side
+        - variable: rarity
+          value_selector:
+          - parse_lookup
+          - exact_rarity
+        - variable: similar_json
+          value_selector:
+          - parse_lookup
+          - similar_json
+        outputs:
+          reply: *id001
+      position:
+        x: 1600
+        y: -60
+      targetPosition: left
+      sourcePosition: right
+      positionAbsolute:
+        x: 1600
+        y: -60
+    - id: ans_hit
+      type: custom
+      data:
+        type: answer
+        title: 回复已有条目
+        variables: []
+        answer: '{{#compose_hit.reply#}}'
+      position:
+        x: 1880
+        y: -60
+      targetPosition: left
+      sourcePosition: right
+      positionAbsolute:
+        x: 1880
+        y: -60
+    - id: build_prompt
+      type: custom
+      data:
+        type: code
+        title: 拼提示词
+        code_language: python3
+        code: "import json\n\ndef main(item_a: str, item_b: str, similar_json: str) -> dict:\n    try:\n        sims = json.loads(similar_json or \"[]\")\n    except Exception:\n        sims = []\n    if\
+          \ sims:\n        sim_txt = \"\\n\".join(\n            \"- {}（{}）：{}\".format(s.get(\"name\"), s.get(\"combo\"), s.get(\"effect\"))\n            for s in sims[:3]\n        )\n    else:\n      \
+          \  sim_txt = \"（图鉴里还没有类似的东西，这对组合是全新的）\"\n\n    prompt = (\n        \"玩家往发明机里塞了两件东西：「\" + item_a + \"」和「\" + item_b + \"」。\\n\\n\"\n        \"【图鉴里已有的相似发明，仅供参考，不要照抄】\\n\" + sim_txt + \"\\n\\n\"\n\
+          \        \"请现场发明一件东西。要求：\\n\"\n        \"- 名字 4-8 字，像图鉴条目，具体好记，不要用「XX机」「XX器」硬凑后缀\\n\"\n        \"- 效果必须从这两件物品各自的特点里长出来，让人一想「还真是这样」\\n\"\n        \"- 副作用荒诞但要自洽，是使用者真会遇到的问题\\n\"\n        \"- 稀有度四选一：普通\
+          \ / 稀有 / 史诗 / 传说\\n\\n\"\n        \"只输出 JSON，不要解释，不要 markdown 代码块：\\n\"\n        '{\"name\":\"...\",\"effect\":\"...\",\"side_effect\":\"...\",\"rarity\":\"...\"}'\n    )\n    return {\"prompt\"\
+          : prompt}\n"
+        variables:
+        - variable: item_a
+          value_selector:
+          - parse
+          - item_a
+        - variable: item_b
+          value_selector:
+          - parse
+          - item_b
+        - variable: similar_json
+          value_selector:
+          - parse_lookup
+          - similar_json
+        outputs:
+          prompt: *id001
+      position:
+        x: 1600
+        y: 260
+      targetPosition: left
+      sourcePosition: right
+      positionAbsolute:
+        x: 1600
+        y: 260
+    - id: gen
+      type: custom
+      data:
+        type: llm
+        title: 发明生成
+        model:
+          provider: langgenius/openai_api_compatible/openai_api_compatible
+          name: deepseek-pro
+          mode: chat
+          completion_params:
+            temperature: 0.95
+            max_tokens: 600
+        prompt_template:
+        - role: system
+          text: 你是一台荒诞发明机的内核，任务是持續发明没人要的东西。你不解释、不寒暄，只输出 JSON。
+        - role: user
+          text: '{{#build_prompt.prompt#}}'
+        context:
+          enabled: false
+          variable_selector: []
+        vision:
+          enabled: false
+        memory:
+          window:
+            enabled: false
+            size: 10
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            user: ''
+            assistant: ''
+      position:
+        x: 1880
+        y: 260
+      targetPosition: left
+      sourcePosition: right
+      positionAbsolute:
+        x: 1880
+        y: 260
+    - id: parse_inv
+      type: custom
+      data:
+        type: code
+        title: 解析发明
+        code_language: python3
+        code: "import json, re\n\ndef main(text: str) -> dict:\n    t = (text or \"\").strip()\n    t = re.sub(r\"^```(?:json)?|```$\", \"\", t, flags=re.M).strip()\n    m = re.search(r\"\\{.*\\}\", t,\
+          \ re.S)\n    d = {}\n    if m:\n        try:\n            d = json.loads(m.group(0))\n        except Exception:\n            d = {}\n    rarity = str(d.get(\"rarity\") or \"普通\").strip()\n   \
+          \ if rarity not in (\"普通\", \"稀有\", \"史诗\", \"传说\"):\n        rarity = \"普通\"\n    return {\n        \"name\": (str(d.get(\"name\") or \"\").strip() or \"无名发明\")[:20],\n        \"effect\": (str(d.get(\"\
+          effect\") or \"\").strip() or \"机器自己也没说清\")[:200],\n        \"side_effect\": (str(d.get(\"side_effect\") or \"\").strip() or \"暂时没发现，通常意味着更麻烦\")[:200],\n        \"rarity\": rarity,\n        \"\
+          ok\": bool(d.get(\"name\")),\n    }\n"
+        variables:
+        - variable: text
+          value_selector:
+          - gen
+          - text
+        outputs:
+          name: *id001
+          effect: *id001
+          side_effect: *id001
+          rarity: *id001
+          ok: *id002
+      position:
+        x: 2160
+        y: 260
+      targetPosition: left
+      sourcePosition: right
+      positionAbsolute:
+        x: 2160
+        y: 260
+    - id: save
+      type: custom
+      data:
+        type: http-request
+        title: 存档进图鉴
+        method: post
+        url: http://172.30.224.1:3000/save
+        authorization:
+          type: no-auth
+          config: null
+        headers: Content-Type:application/json
+        params: ''
+        body:
+          type: json
+          data:
+          - key: ''
+            type: text
+            value: '{"a":"{{#parse.item_a#}}","b":"{{#parse.item_b#}}","name":"{{#parse_inv.name#}}","effect":"{{#parse_inv.effect#}}","side_effect":"{{#parse_inv.side_effect#}}","rarity":"{{#parse_inv.rarity#}}"}'
+            file: []
+        timeout:
+          max_connect_timeout: 10
+          max_read_timeout: 30
+          max_write_timeout: 30
+        ssl_verify: false
+        variables: []
+        retry_config:
+          retry_enabled: true
+          max_retries: 2
+          retry_interval: 1000
+      position:
+        x: 2440
+        y: 260
+      targetPosition: left
+      sourcePosition: right
+      positionAbsolute:
+        x: 2440
+        y: 260
+    - id: compose_new
+      type: custom
+      data:
+        type: code
+        title: 组装新条目
+        code_language: python3
+        code: "import json\n\ndef main(item_a: str, item_b: str, name: str, effect: str, side: str, rarity: str,\n         similar_json: str, save_resp: str) -> dict:\n    try:\n        sims = json.loads(similar_json\
+          \ or \"[]\")\n    except Exception:\n        sims = []\n    try:\n        sv = json.loads(save_resp or \"{}\")\n    except Exception:\n        sv = {}\n    total = sv.get(\"total\")\n    saved\
+          \ = bool(sv.get(\"saved\"))\n\n    extra = \"\"\n    if sims:\n        picks = \"、\".join(\"「{}」\".format(s.get(\"name\")) for s in sims[:2])\n        extra = \"\\n\\n（图鉴边上有人小声说：这个思路有点像 \" + picks\
+          \ + \"。）\"\n\n    if saved and total:\n        tail = \"已收进图鉴，现在是第 \" + str(total) + \" 条发明。\"\n    elif saved:\n        tail = \"已收进图鉴。\"\n    else:\n        tail = \"图鉴写入出了点问题，但东西已经造出来了。\"\n\
+          \n    reply = (\n        \"### 新发明：\" + name + \"\\n\\n\"\n        \"**\" + item_a + \" + \" + item_b + \"**　稀有度 \" + rarity + \"\\n\\n\"\n        \"效果：\" + effect + \"\\n\\n\"\n        \"副作用：\"\
+          \ + side + extra + \"\\n\\n\"\n        \"---\\n\\n\"\n        + tail + \"\\n再给我两件东西，继续。\"\n    )\n    return {\"reply\": reply}\n"
+        variables:
+        - variable: item_a
+          value_selector:
+          - parse
+          - item_a
+        - variable: item_b
+          value_selector:
+          - parse
+          - item_b
+        - variable: name
+          value_selector:
+          - parse_inv
+          - name
+        - variable: effect
+          value_selector:
+          - parse_inv
+          - effect
+        - variable: side
+          value_selector:
+          - parse_inv
+          - side_effect
+        - variable: rarity
+          value_selector:
+          - parse_inv
+          - rarity
+        - variable: similar_json
+          value_selector:
+          - parse_lookup
+          - similar_json
+        - variable: save_resp
+          value_selector:
+          - save
+          - body
+        outputs:
+          reply: *id001
+      position:
+        x: 2720
+        y: 260
+      targetPosition: left
+      sourcePosition: right
+      positionAbsolute:
+        x: 2720
+        y: 260
+    - id: ans_new
+      type: custom
+      data:
+        type: answer
+        title: 回复新发明
+        variables: []
+        answer: '{{#compose_new.reply#}}'
+      position:
+        x: 3000
+        y: 260
+      targetPosition: left
+      sourcePosition: right
+      positionAbsolute:
+        x: 3000
+        y: 260
+    edges:
+    - id: start-parse
+      source: start
+      sourceHandle: source
+      target: parse
+      targetHandle: target
+      type: custom
+      data:
+        sourceType: start
+        targetType: code
+    - id: parse-if_valid
+      source: parse
+      sourceHandle: source
+      target: if_valid
+      targetHandle: target
+      type: custom
+      data:
+        sourceType: code
+        targetType: if-else
+    - id: if_valid-lookup
+      source: if_valid
+      sourceHandle: 'true'
+      target: lookup
+      targetHandle: target
+      type: custom
+      data:
+        sourceType: if-else
+        targetType: http-request
+    - id: if_valid-ask
+      source: if_valid
+      sourceHandle: 'false'
+      target: ask
+      targetHandle: target
+      type: custom
+      data:
+        sourceType: if-else
+        targetType: answer
+    - id: lookup-parse_lookup
+      source: lookup
+      sourceHandle: source
+      target: parse_lookup
+      targetHandle: target
+      type: custom
+      data:
+        sourceType: http-request
+        targetType: code
+    - id: parse_lookup-if_hit
+      source: parse_lookup
+      sourceHandle: source
+      target: if_hit
+      targetHandle: target
+      type: custom
+      data:
+        sourceType: code
+        targetType: if-else
+    - id: if_hit-compose_hit
+      source: if_hit
+      sourceHandle: 'true'
+      target: compose_hit
+      targetHandle: target
+      type: custom
+      data:
+        sourceType: if-else
+        targetType: code
+    - id: compose_hit-ans_hit
+      source: compose_hit
+      sourceHandle: source
+      target: ans_hit
+      targetHandle: target
+      type: custom
+      data:
+        sourceType: code
+        targetType: answer
+    - id: if_hit-build_prompt
+      source: if_hit
+      sourceHandle: 'false'
+      target: build_prompt
+      targetHandle: target
+      type: custom
+      data:
+        sourceType: if-else
+        targetType: code
+    - id: build_prompt-gen
+      source: build_prompt
+      sourceHandle: source
+      target: gen
+      targetHandle: target
+      type: custom
+      data:
+        sourceType: code
+        targetType: llm
+    - id: gen-parse_inv
+      source: gen
+      sourceHandle: source
+      target: parse_inv
+      targetHandle: target
+      type: custom
+      data:
+        sourceType: llm
+        targetType: code
+    - id: parse_inv-save
+      source: parse_inv
+      sourceHandle: source
+      target: save
+      targetHandle: target
+      type: custom
+      data:
+        sourceType: code
+        targetType: http-request
+    - id: save-compose_new
+      source: save
+      sourceHandle: source
+      target: compose_new
+      targetHandle: target
+      type: custom
+      data:
+        sourceType: http-request
+        targetType: code
+    - id: compose_new-ans_new
+      source: compose_new
+      sourceHandle: source
+      target: ans_new
+      targetHandle: target
+      type: custom
+      data:
+        sourceType: code
+        targetType: answer
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.6
+  features:
+    opening_statement: '把两件日常物品塞进发明机，我给你造个没人要的东西。
+
+
+      比如：**猫 + 微波炉**、**拖鞋 + 无人机**、**咖啡 + 电梯**。
+
+      后果自负。'
+    suggested_questions:
+    - 猫 + 微波炉
+    - 拖鞋 + 洗衣机
+    - 咖啡 + 电梯
+    - 谎言 + 充电宝
+    suggested_questions_after_answer:
+      enabled: true
+    text_to_speech:
+      enabled: false
+      voice: ''
+      language: ''
+    speech_to_text:
+      enabled: false
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    file_upload:
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+  environment_variables: []
+  conversation_variables: []
+dependencies: []
+kind: app
+version: 0.3.0
+
