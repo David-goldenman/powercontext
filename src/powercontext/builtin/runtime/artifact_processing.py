@@ -68,6 +68,7 @@ from powercontext.builtin.runtime.processing_contracts import (
     WorkerEntrypoint,
 )
 from powercontext.builtin.runtime.protocols import RuntimeTracing
+from powercontext.builtin.runtime.source_count_admission import SourceCountAdmission
 
 logger = logging.getLogger(__name__)
 _OCEANBASE_TICK_SECONDS = 1.0
@@ -80,6 +81,10 @@ _RETRY_STATE_LIMIT = 1000
 _CHANNEL_QUEUE_LIMIT = _DISCOVERY_PAGE_SIZE // 2
 _DISCOVERY_PAGE_DELAY_SECONDS = 0.01
 _DISCOVERY_TIMEOUT_SECONDS = 2.0
+# A count threshold has no external clock: the Supervisor polls the durable
+# journal frontier often enough that a capture still wakes working Scopes
+# promptly, and rarely enough that an idle threshold costs almost nothing.
+_COUNT_POLL_SECONDS = 0.2
 _SPAWN_SIGTERM_GRACE_SECONDS = 1.0
 _WORKER_SHUTDOWN_TIMEOUT_SECONDS = 5.0
 ProcessingKey = tuple[str, str]
@@ -113,6 +118,9 @@ class ArtifactProcessingBinding:
     cron: str | None = None
     timezone: str = "Asia/Shanghai"
     config_prefix: str | None = None
+    # Count admission starts the same processing call as a time condition, once
+    # this many new journal identities exist after the Family's own cursor.
+    source_count_threshold: int | None = None
     pending_provider: ArtifactProcessingPendingProvider | None = None
     # Only automatic admission is filtered; already accepted requests retain
     # their own Worker authorization and domain completion semantics.
@@ -138,6 +146,10 @@ class ArtifactProcessingBinding:
                 raise ValueError("interval and cron cannot both be enabled")  # noqa: TRY003
         if self.cron is not None:
             CronTrigger.from_crontab(self.cron, timezone=ZoneInfo(self.timezone))
+        if self.source_count_threshold is not None and (
+            type(self.source_count_threshold) is not int or self.source_count_threshold < 1
+        ):
+            raise ValueError("source_count_threshold must be a positive integer")  # noqa: TRY003
 
 
 class _WorkerResultSender(Protocol):
@@ -397,6 +409,8 @@ class _FamilyState:
     scan_in_progress: bool = False
     reconcile_after: str | None = None
     reconcile_complete: bool = False
+    count_after: str | None = None
+    next_count_at: float = 0.0
     notification_at_start: int = 0
     discovery_pending: bool = True
     next_schedule_at: float | None = None
@@ -448,6 +462,7 @@ class ArtifactProcessingSupervisor:
         self._intents = intents or ArtifactProcessingIntentRepository()
         self._leases = leases or ArtifactProcessingLeaseRepository()
         self._binding_states = binding_states or ArtifactProcessingBindingStateRepository()
+        self._count_admission = SourceCountAdmission()
         self.holder_id = holder_id or str(uuid4())
         self._tick = oceanbase_tick_seconds
         self._lease_seconds = oceanbase_lease_seconds
@@ -615,10 +630,14 @@ class ArtifactProcessingSupervisor:
             now = asyncio.get_running_loop().time()
             # Reserve fresh admission before retries can occupy a newly freed
             # Worker. FIFO ready order then shares execution between channels.
+            count_due = state.binding.source_count_threshold is not None and now >= max(
+                state.next_count_at, state.overflow_not_before
+            )
             discoverable = (
                 len(state.running) < state.binding.max_workers
                 and self._fresh_capacity(state) > 0
-                and now >= max(state.next_discovery_at, state.overflow_not_before)
+                and now >= state.overflow_not_before
+                and (count_due or now >= state.next_discovery_at)
             )
             if discoverable:
                 try:
@@ -639,6 +658,8 @@ class ArtifactProcessingSupervisor:
     async def _discover(self, state: _FamilyState) -> None:
         binding = state.binding
         loop = asyncio.get_running_loop()
+        if binding.source_count_threshold is not None:
+            await self._discover_count(state)
         if not state.reconcile_complete and binding.pending_provider is not None:
             state.reconcile_after = await binding.pending_provider.reconcile(
                 state.reconcile_after, _DISCOVERY_PAGE_SIZE, fence=self._require_current_fence()
@@ -656,6 +677,35 @@ class ArtifactProcessingSupervisor:
         else:
             await self._discover_requested(state)
             await self._discover_automatic(state)
+
+    async def _discover_count(self, state: _FamilyState) -> None:
+        """Accept Scopes that hold enough new journal identities.
+
+        The pass reads only durable journal metadata: heads, the Family's own
+        cursors, and its request generations. One pass is one bounded keyset
+        page, so an idle threshold never scans an unbounded set.
+        """
+
+        binding = state.binding
+        threshold = binding.source_count_threshold
+        if threshold is None or self._fresh_capacity(state) <= 0:
+            return
+        loop = asyncio.get_running_loop()
+        if loop.time() < state.next_count_at:
+            return
+        async with self._database.transaction() as connection:
+            await self._leases.require_fence(connection, self._require_current_fence())
+            admitted, next_after = await self._count_admission.admit(
+                connection, binding.binding_name, threshold, after_scope_id=state.count_after
+            )
+        state.count_after = next_after
+        # A completed pass waits for the next poll; an unfinished page continues
+        # almost immediately, exactly like the other bounded discovery channels.
+        state.next_count_at = loop.time() + (
+            _COUNT_POLL_SECONDS if next_after is None else _DISCOVERY_PAGE_DELAY_SECONDS
+        )
+        for scope in admitted:
+            self._enqueue(state, scope)
 
     async def _discover_requested(self, state: _FamilyState) -> None:
         capacity = self._fresh_capacity(state)
@@ -1059,6 +1109,8 @@ class ArtifactProcessingSupervisor:
             state.retries.clear()
             state.requested_after = state.scan_after = state.scan_generation = 0
             state.scan_in_progress = False
+            state.count_after = None
+            state.next_count_at = 0.0
             state.discovery_pending = True
 
     async def _reap_unconfirmed_exits(self) -> None:
@@ -1093,6 +1145,10 @@ class ArtifactProcessingSupervisor:
                 continue
             if state.next_schedule_at is not None:
                 deadlines.append(state.next_schedule_at)
+            if state.binding.source_count_threshold is not None:
+                # A count threshold has no external clock, so the frontier is
+                # polled instead of relying on a timer notification.
+                deadlines.append(max(now, state.next_count_at))
             if state.discovery_pending or state.scan_in_progress or not state.reconcile_complete or state.degraded:
                 deadlines.append(max(now, state.next_discovery_at))
         return None if not deadlines else max(0.001, min(deadlines) - now)

@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping
-from typing import Any, Literal, Self
+from typing import Annotated, Any, Literal, Self
 
 from pydantic import (
     AnyHttpUrl,
@@ -28,6 +28,7 @@ from pydantic import (
     JsonValue,
     PrivateAttr,
     SecretStr,
+    StrictInt,
     field_validator,
     model_validator,
 )
@@ -137,6 +138,12 @@ class RuntimeConfig(BaseModel):
 
     scope_cache_size: int = Field(default=DEFAULT_SCOPE_CACHE_SIZE, ge=1)
     source_window_limit: int = Field(default=100, ge=1)
+    # A count threshold starts automatic processing once this many new journal
+    # identities exist after the Family's last successful Source cursor. It is
+    # strict so booleans, floats, and numeric strings cannot silently become a
+    # threshold; ``None`` keeps the existing time-only trigger.
+    memory_source_count_threshold: Annotated[StrictInt, Field(gt=0)] | None = None
+    topic_memory_source_count_threshold: Annotated[StrictInt, Field(gt=0)] | None = None
     context_assembly_max_entries: int = Field(default=8, ge=1)
     memory_extraction_profile: MemoryExtractionProfile = MemoryExtractionProfile.CODING
     memory_rerank_enabled: bool = False
