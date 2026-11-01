@@ -98,6 +98,12 @@ from powercontext.builtin.runtime.config import (
     InferenceConfig,
     RuntimeConfig,
 )
+from powercontext.builtin.runtime.context_pack import (
+    ContextPack,
+    ContextPackDelta,
+    ContextPackError,
+    apply_context_pack_delta,
+)
 from powercontext.builtin.runtime.decision_model import (
     DecisionKind,
     DecisionModel,
