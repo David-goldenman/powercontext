@@ -159,7 +159,7 @@ docker compose exec -T api sh -c 'wget -qO- http://fusion-api:3000/health'
 
 ## 6. 验证样例
 
-完整步骤、预期表现和实测结果见 **[VERIFY.md](./VERIFY.md)**。三组样例分别覆盖：
+完整步骤、预期表现和实测结果见 **[VERIFY.md](./VERIFY.md)**。四组样例分别覆盖：
 
 | 样例 | 验证什么 |
 |---|---|
@@ -167,6 +167,20 @@ docker compose exec -T api sh -c 'wget -qO- http://fusion-api:3000/health'
 | B. `面条 + 路由器` → 再问一次 | 写入 + 复用：第一次发明并入库，第二次命中 |
 | C. `路由器 + 面条` | 顺序无关的查重逻辑 |
 | D. `猫`（只给一件） | 分支兜底：不报错，引导补一件 |
+
+### 评审复现路径（已实测）
+
+本作品按下面这条路径做过完整复演：**从 GitHub 全新 clone → 清空所有 fusion 容器和卷 → 只按本 README 执行 → 导入 clone 出来的 DSL → 跑验证样例**，全程未改动任何地址、未使用作者本地的任何状态。
+
+```bash
+# 全新环境
+git clone --depth 1 -b 2026-competition-ecosystem \
+  https://github.com/David-goldenman/powercontext.git
+bash powercontext/dify/scripts/start-data-layer.sh /path/to/dify/docker
+# ==> 就绪：{"ok":true,"table":"fusions","total":24}
+```
+
+然后在 Dify 导入 `powercontext/dify/dsl/fusion_lab.yml`，发布，即可对话。
 
 ## 7. 踩过的坑
 

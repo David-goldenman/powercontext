@@ -21,6 +21,55 @@ Dify 侧：**应用 → 导入 DSL 文件 → `dsl/fusion_lab.yml`**，导入状
 
 > DSL 里的数据层地址是 `http://fusion-api:3000`（compose 服务名），按 README §4 部署即可直接连通，**无需改地址**。
 
+### 评审复现实测
+
+按要求做了一次完整复演，模拟评审拿到仓库后的操作：
+
+```bash
+# 1. 全新 clone（不含作者本地任何文件）
+$ git clone --depth 1 -b 2026-competition-ecosystem \
+    https://github.com/David-goldenman/powercontext.git /opt/review-sim
+
+# 2. 清空所有既有容器与卷
+$ docker rm -f fusion-api fusion-seekdb
+$ docker volume rm docker_fusion-seekdb-data
+
+# 3. 只按 README §4.2 执行
+$ bash /opt/review-sim/dify/scripts/start-data-layer.sh /opt/dify/docker
+...
+ fusion-seekdb  Started
+ fusion-api     Started
+==> 就绪：{"ok":true,"table":"fusions","total":24}
+
+# 4. 导入 clone 出来的 DSL
+$ # 应用 → 导入 DSL → /opt/review-sim/dify/dsl/fusion_lab.yml
+导入状态: completed-with-warnings（节点/连线完整）
+```
+
+随后对话（此轮使用 clone 里的 DSL，未改动任何地址）：
+
+```
+>>> 猫 + 微波炉
+### 图鉴已有：猫波炉
+**猫 + 微波炉** 这组配方早就被人试过了，稀有度 传说。
+效果：把猫放进微波炉，会得到一台会自己加热的机器
+副作用：它只加热自己，不加热食物
+（图鉴边上有人小声说：这个思路有点像 「反向遛猫器」。）
+
+>>> 伞 + 冰箱
+### 新发明：遮阳冰伞
+**伞 + 冰箱**　稀有度 稀有
+效果：撑开后伞面会持续吸收周围热量并冻成一层薄冰，烈日下伞下温度骤降十度……
+副作用：冰层融化时水会顺着伞骨流到握柄，使用者每次收伞都像刚洗完手……
+已收进图鉴，现在是第 25 条发明。
+
+>>> 猫 + 微波炉
+### 图鉴已有：猫波炉
+（与第一次逐字一致）
+```
+
+结论：**评审按 README 走即可复现，不依赖作者本地状态。**
+
 ```bash
 $ docker exec fusion-seekdb bash -c "mysql -h 127.0.0.1 -P 2881 -u root -e 'SHOW CREATE TABLE fusion.fusions\G'"
        Table: fusions
