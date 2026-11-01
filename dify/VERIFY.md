@@ -4,23 +4,25 @@
 
 ## 0. 复现方式与自检
 
-本节所有结果来自**用仓库内 `dsl/fusion_lab.yml` 全新导入的 Dify 应用**，图鉴重置为 24 条种子数据后执行，非沿用开发时的旧应用。
+本节所有结果来自**用仓库内 `dsl/fusion_lab.yml` 全新导入的 Dify 应用**，数据层用 `scripts/start-data-layer.sh` 以容器方式起（seekdb + fusion-api 独立于开发环境），图鉴重置为 24 条种子数据后执行。
 
 ```bash
-$ curl -s -X POST http://127.0.0.1:3000/reset
-{"reset":true,"total":0}
+$ bash scripts/start-data-layer.sh /opt/dify/docker
+...
+ fusion-seekdb  Started
+ fusion-api     Started
+==> 就绪：{"ok":true,"table":"fusions","total":24}
 
-$ cd backend && SEEKDB_PORT=2895 node seed.mjs
-写入 24 条种子发明，当前总数 24
-
-$ curl -s http://127.0.0.1:3000/health
+$ docker exec fusion-api wget -qO- http://127.0.0.1:3000/health
 {"ok":true,"table":"fusions","total":24}
 ```
 
 Dify 侧：**应用 → 导入 DSL 文件 → `dsl/fusion_lab.yml`**，导入状态 `completed-with-warnings`（0.3.0 → 0.4.0 版本迁移提示，节点与连线完整），发布后新建 API Key。
 
+> DSL 里的数据层地址是 `http://fusion-api:3000`（compose 服务名），按 README §4 部署即可直接连通，**无需改地址**。
+
 ```bash
-$ mysql -h 127.0.0.1 -P 2895 -u root -e "SHOW CREATE TABLE fusion.fusions\G"
+$ docker exec fusion-seekdb bash -c "mysql -h 127.0.0.1 -P 2881 -u root -e 'SHOW CREATE TABLE fusion.fusions\G'"
        Table: fusions
 Create Table: CREATE TABLE `fusions` (
   `id` varchar(64) NOT NULL,
@@ -227,12 +229,12 @@ f_1793557...             面条    路由器  拉面信号增强碗   稀有    
 ## 如何恢复初始状态
 
 ```bash
-# 方式一：清空后重新灌种子
-cd backend
-SEEKDB_PORT=2895 node seed.mjs --reset
+# 方式一：清空后重新灌种子（容器内执行）
+docker exec fusion-api sh -c 'node seed.mjs --reset'
 
-# 方式二：走接口
-curl -X POST http://127.0.0.1:3000/reset
+# 方式二：只清空，再重启 fusion-api（启动时会自动灌种子）
+docker exec fusion-api wget -qO- --post-data='' http://127.0.0.1:3000/reset
+docker restart fusion-api
 ```
 
 `--reset` 会 `TRUNCATE TABLE fusions` 后重写 24 条种子数据，回到样例 A 的前提。

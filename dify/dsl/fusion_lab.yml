@@ -102,7 +102,7 @@ workflow:
         type: http-request
         title: 查图鉴历史
         method: post
-        url: http://172.30.224.1:3000/lookup
+        url: http://fusion-api:3000/lookup
         authorization:
           type: no-auth
           config: null
@@ -360,7 +360,7 @@ workflow:
         type: http-request
         title: 存档进图鉴
         method: post
-        url: http://172.30.224.1:3000/save
+        url: http://fusion-api:3000/save
         authorization:
           type: no-auth
           config: null

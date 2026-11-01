@@ -9,11 +9,15 @@
             是 → 组装「已有条目」回复（只读库，不生成）
             否 → 拼提示词 → LLM 发明 → 解析 → 存入 seekdb → 组装「新发明」回复
 """
+import os
 import yaml
 
 PROVIDER = "langgenius/openai_api_compatible/openai_api_compatible"
 MODEL = "deepseek-pro"
-API_BASE = "http://172.30.224.1:3000"
+# 数据层地址。默认走 docker-compose 网络里的服务名，评审按 README §4.3 叠加 compose 即可直接跑通。
+# 若数据层不在 Docker 里，生成时用环境变量覆盖：
+#   API_BASE=http://host.docker.internal:3000 python gen_dsl.py > dsl/fusion_lab.yml
+API_BASE = os.environ.get("API_BASE", "http://fusion-api:3000")
 
 def _node(nid, data, x, y):
     return {"id": nid, "type": "custom", "data": data,

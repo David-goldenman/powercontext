@@ -1,0 +1,55 @@
+# 离谱发明工坊 — 数据层（seekdb + fusion-api）
+#
+# 本文件不单独启动，而是与 Dify 自己的 docker-compose.yaml 叠加启动，
+# 这样 fusion-api 与 Dify 的 api 容器处在同一个默认网络里，
+# DSL 中用服务名 http://fusion-api:3000 即可访问，评审无需改任何地址。
+#
+# 推荐用 scripts/start-data-layer.sh 启动（它会算好构建目录）；
+# 手动启动见 README §4.3。
+#
+# 注意：build.context 用环境变量 FUSION_BACKEND_DIR 传绝对路径，
+# 因为 compose 的 build 上下文是按 project-directory（Dify 的 docker 目录）解析的，
+# 相对路径会指错地方。
+
+services:
+  fusion-seekdb:
+    image: oceanbase/seekdb:latest
+    container_name: fusion-seekdb
+    environment:
+      ROOT_PASSWORD: ""
+    volumes:
+      - fusion-seekdb-data:/var/lib/seekdb
+    healthcheck:
+      # 镜像里没有 nc，用 bash 的 /dev/tcp 探端口
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/2881' || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 40
+      start_period: 25s
+    restart: unless-stopped
+
+  fusion-api:
+    build:
+      context: ${FUSION_BACKEND_DIR:?请通过 scripts/start-data-layer.sh 启动，或手动导出 FUSION_BACKEND_DIR 为本仓库 dify/backend 的绝对路径}
+      args:
+        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmmirror.com}
+    container_name: fusion-api
+    environment:
+      PORT: "3000"
+      SEEKDB_HOST: fusion-seekdb
+      SEEKDB_PORT: "2881"
+      SEEKDB_USER: root
+      SEEKDB_DB: fusion
+    depends_on:
+      fusion-seekdb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 40s
+    restart: unless-stopped
+
+volumes:
+  fusion-seekdb-data:
