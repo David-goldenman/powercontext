@@ -156,6 +156,7 @@ from powercontext.builtin.runtime.readiness import (
 )
 from powercontext.builtin.runtime.recall_sufficiency import RecallSufficiencyPolicy
 from powercontext.builtin.runtime.relational import RelationalContexts
+from powercontext.builtin.runtime.source_lifecycle import SourceLifecycleApplication
 from powercontext.builtin.runtime.topic_memory_processing import (
     TopicMemoryWorkerSpec,
     run_topic_memory_worker,
@@ -653,6 +654,7 @@ async def open_builtin_runtime(
                 remote_ingestion=contexts,
             )
         )
+        runtime.lifecycle = SourceLifecycleApplication(runtime, contexts.database)
         runtime.artifact_processing_supervisor = await resources.enter_async_context(
             _open_artifact_processing_supervisor(config, contexts, processing_bindings, tracing=tracing)
         )
@@ -778,6 +780,7 @@ def _artifact_processing_bindings(  # noqa: C901 - validate and assemble one reg
                 launcher=SpawnArtifactProcessingWorkerLauncher(entrypoint),
                 max_workers=getattr(config.runtime, f"{prefix}_max_workers"),
                 worker_timeout_seconds=getattr(config.runtime, f"{prefix}_worker_timeout_seconds"),
+                source_count_threshold=getattr(config.runtime, f"{prefix}_source_count_threshold", None),
                 automatic_processing_interval=None if interval is None else timedelta(seconds=float(interval)),
                 cron=config.runtime.profile_cron
                 if family == "profile" and config.runtime.profile_schedule_enabled
