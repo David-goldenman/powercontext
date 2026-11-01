@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.seekdb/
+*.log
+# fp32 基线权重 94.8MB，仅用于量化对比，不随仓库提交；运行只需要 fp16 与 q8
+models/**/onnx/model.onnx

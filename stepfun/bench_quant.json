@@ -1,0 +1,30 @@
+{
+  "fp16": {
+    "sizeBytes": 45297825,
+    "sizeMB": 43.2,
+    "compressionRatio": 2,
+    "meanDocCosineVsFp32": 1,
+    "topKOverlap": 1,
+    "loadMs": 187,
+    "embed6Ms": 34,
+    "dim": 384
+  },
+  "q8": {
+    "sizeBytes": 22972370,
+    "sizeMB": 21.91,
+    "compressionRatio": 3.93,
+    "meanDocCosineVsFp32": 0.9864,
+    "topKOverlap": 0.9333,
+    "loadMs": 124,
+    "embed6Ms": 12,
+    "dim": 384
+  },
+  "fp32": {
+    "sizeBytes": 90387606,
+    "sizeMB": 86.2,
+    "compressionRatio": 1,
+    "loadMs": 352,
+    "embed6Ms": 27,
+    "dim": 384
+  }
+}

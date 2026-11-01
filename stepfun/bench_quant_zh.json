@@ -1,0 +1,68 @@
+{
+  "Xenova/all-MiniLM-L6-v2": {
+    "dim": 384,
+    "baseSizeMB": 86.2,
+    "variants": {
+      "fp32": {
+        "sizeMB": 86.2,
+        "compressionRatio": 1,
+        "loadMs": 244,
+        "embed6Ms": 30,
+        "meanDocCosineVsFp32": null,
+        "top3OverlapVsFp32": null,
+        "retrievalHitRateTop3": 0.8
+      },
+      "fp16": {
+        "sizeMB": 43.2,
+        "compressionRatio": 2,
+        "loadMs": 171,
+        "embed6Ms": 44,
+        "meanDocCosineVsFp32": 1,
+        "top3OverlapVsFp32": 1,
+        "retrievalHitRateTop3": 0.8
+      },
+      "q8": {
+        "sizeMB": 21.91,
+        "compressionRatio": 3.93,
+        "loadMs": 127,
+        "embed6Ms": 18,
+        "meanDocCosineVsFp32": 0.984,
+        "top3OverlapVsFp32": 0.8667,
+        "retrievalHitRateTop3": 0.8
+      }
+    }
+  },
+  "Xenova/bge-small-zh-v1.5": {
+    "dim": 512,
+    "baseSizeMB": 90.46,
+    "variants": {
+      "fp32": {
+        "sizeMB": 90.46,
+        "compressionRatio": 1,
+        "loadMs": 164,
+        "embed6Ms": 17,
+        "meanDocCosineVsFp32": null,
+        "top3OverlapVsFp32": null,
+        "retrievalHitRateTop3": 1
+      },
+      "fp16": {
+        "sizeMB": 45.3,
+        "compressionRatio": 2,
+        "loadMs": 118,
+        "embed6Ms": 49,
+        "meanDocCosineVsFp32": 1,
+        "top3OverlapVsFp32": 1,
+        "retrievalHitRateTop3": 1
+      },
+      "q8": {
+        "sizeMB": 22.9,
+        "compressionRatio": 3.95,
+        "loadMs": 87,
+        "embed6Ms": 19,
+        "meanDocCosineVsFp32": 0.9908,
+        "top3OverlapVsFp32": 1,
+        "retrievalHitRateTop3": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>端侧知识库 · Transformers.js + seekdb 混合检索</title>
+<link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+<header>
+  <h1>端侧知识库</h1>
+  <p class="sub">向量化全部在你的浏览器里完成 · 检索由 seekdb 混合索引完成</p>
+  <div class="badges">
+    <span id="badge-backend" class="badge">推理后端：检测中…</span>
+    <span id="badge-model" class="badge">模型：未加载</span>
+    <span id="badge-db" class="badge">seekdb：检测中…</span>
+    <span id="badge-count" class="badge">文档：0</span>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <h2>1 · 导入语料</h2>
+    <p class="hint">选择本地 .txt / .md 文件，或直接粘贴文本。所有内容只进入本地 seekdb，不会上传到任何推理服务。</p>
+    <div class="row">
+      <input type="file" id="files" multiple accept=".txt,.md,.text" />
+      <button id="btn-paste-toggle" class="ghost">粘贴文本</button>
+    </div>
+    <div id="paste-wrap" hidden>
+      <textarea id="paste" rows="6" placeholder="粘贴一段文本…"></textarea>
+      <button id="btn-add-paste">加入知识库</button>
+    </div>
+    <div class="progress"><div id="bar" class="bar"></div></div>
+    <div id="import-log" class="log"></div>
+  </section>
+
+  <section class="card">
+    <h2>2 · 检索</h2>
+    <div class="row">
+      <input id="q" type="text" placeholder="一句话提问，例如：哪家咖啡店适合安静看书？" />
+      <select id="mode">
+        <option value="hybrid">混合检索（向量 + 全文，RRF 融合）</option>
+        <option value="vector">仅向量</option>
+        <option value="fulltext">仅全文</option>
+      </select>
+      <button id="btn-search">检索</button>
+    </div>
+    <div id="search-meta" class="log"></div>
+    <div id="results"></div>
+  </section>
+
+  <section class="card">
+    <h2>3 · 运行状态</h2>
+    <table class="kv">
+      <tr><td>推理后端</td><td id="st-backend">—</td></tr>
+      <tr><td>模型</td><td id="st-model">—</td></tr>
+      <tr><td>向量维度</td><td id="st-dim">—</td></tr>
+      <tr><td>模型体积</td><td id="st-size">—</td></tr>
+      <tr><td>分批大小</td><td id="st-batch">—</td></tr>
+      <tr><td>文档数</td><td id="st-count">—</td></tr>
+      <tr><td>上次向量化耗时</td><td id="st-embed">—</td></tr>
+      <tr><td>上次写入耗时</td><td id="st-write">—</td></tr>
+      <tr><td>上次检索耗时</td><td id="st-search">—</td></tr>
+    </table>
+    <div class="row">
+      <button id="btn-reset" class="danger">清空知识库</button>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+import { pipeline, env } from '/vendor/transformers.min.js';
+window.__hf = { pipeline, env };
+window.dispatchEvent(new Event('tf-ready'));
+</script>
+<script type="module" src="./main.js"></script>
+</body>
+</html>
