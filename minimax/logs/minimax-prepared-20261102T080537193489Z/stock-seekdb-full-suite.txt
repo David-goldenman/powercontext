@@ -1,0 +1,30 @@
+test_accepts_public_python_proposal (test_adapter.AdapterTests.test_accepts_public_python_proposal) ... ok
+test_discards_reasoning_blocks (test_adapter.AdapterTests.test_discards_reasoning_blocks) ... ok
+test_frozen_test_source_change_is_detected (test_adapter.AdapterTests.test_frozen_test_source_change_is_detected) ... ok
+test_rejects_other_paths_and_invalid_python (test_adapter.AdapterTests.test_rejects_other_paths_and_invalid_python) ... ok
+test_rejects_unclosed_reasoning (test_adapter.AdapterTests.test_rejects_unclosed_reasoning) ... ok
+test_sanitized_receipt_survives_rejection (test_adapter.AdapterTests.test_sanitized_receipt_survives_rejection) ... ok
+test_test_environment_contains_no_model_credentials (test_adapter.AdapterTests.test_test_environment_contains_no_model_credentials) ... ok
+test_zero_tests_and_skips_cannot_be_verified (test_adapter.AdapterTests.test_zero_tests_and_skips_cannot_be_verified) ... ok
+test_database_allowlist_rejects_other_schema (test_context.ContextTests.test_database_allowlist_rejects_other_schema) ... ok
+test_database_sources_spec_reimport_and_removed_content (test_context.ContextTests.test_database_sources_spec_reimport_and_removed_content) ... ok
+test_missing_source_is_rejected (test_context.ContextTests.test_missing_source_is_rejected) ... ok
+test_powercontext_creates_fresh_nested_store_parent (test_context.ContextTests.test_powercontext_creates_fresh_nested_store_parent) ... ok
+test_powercontext_write_then_new_process_uses_state (test_context.ContextTests.test_powercontext_write_then_new_process_uses_state) ... ok
+test_stale_source_is_rejected_then_reimported (test_context.ContextTests.test_stale_source_is_rejected_then_reimported) ... ok
+test_state_update_retains_binding_and_latest_progress (test_context.ContextTests.test_state_update_retains_binding_and_latest_progress) ... ok
+test_default_priority_then_id_order (test_regression.RegressionTests.test_default_priority_then_id_order) ... ok
+test_empty_and_no_status_match (test_regression.RegressionTests.test_empty_and_no_status_match) ... ok
+test_input_is_not_mutated_and_results_are_copies (test_regression.RegressionTests.test_input_is_not_mutated_and_results_are_copies) ... ok
+test_none_filter_preserves_baseline (test_regression.RegressionTests.test_none_filter_preserves_baseline) ... ok
+test_status_filter_preserves_order (test_regression.RegressionTests.test_status_filter_preserves_order) ... ok
+test_combines_status_and_priority (test_target.TargetTests.test_combines_status_and_priority) ... ok
+test_inclusive_threshold (test_target.TargetTests.test_inclusive_threshold) ... ok
+test_invalid_values_rejected_even_on_empty_input (test_target.TargetTests.test_invalid_values_rejected_even_on_empty_input) ... ok
+test_valid_boundaries (test_target.TargetTests.test_valid_boundaries) ... ok
+test_valid_filter_on_empty_input (test_target.TargetTests.test_valid_filter_on_empty_input) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 68.947s
+
+OK

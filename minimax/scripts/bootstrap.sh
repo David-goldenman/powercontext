@@ -18,4 +18,4 @@ fi
 "$PYTHON_BIN" -c 'from pathlib import Path; import sys; from scripts.verify_foundation import git_revision; assert git_revision(Path(sys.argv[1]).resolve()) == "1be152d62a4c6df59709f15b184c6b93085fb76f"' "$POWERCONTEXT_SOURCE"
 "$PYTHON_BIN" -m venv .venv
 .venv/bin/python -m pip install --index-url https://pypi.org/simple -r requirements.txt
-printf 'Bootstrap complete. Export PYTHONPATH=%s/src and run .venv/bin/python scripts/verify_foundation.py\n' "$POWERCONTEXT_SOURCE"
+printf 'Bootstrap complete. Export PYTHONPATH=%s/src and run .venv/bin/python -m unittest discover -s tests -v\n' "$POWERCONTEXT_SOURCE"

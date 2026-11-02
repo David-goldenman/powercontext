@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/mnt/d/ob-race/powercontext/minimax/.venv/bin/python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-v"
+  ],
+  "exit_code": 0,
+  "timestamp_utc": "2026-11-02T08:13:59.781070+00:00",
+  "code_snapshot": "after.py",
+  "database_version": "5.7.25-OceanBase seekdb-v1.4.0.0",
+  "database_host": "127.0.0.1",
+  "database_port": 2946,
+  "namespace_count_before_tests": 0,
+  "docker_project": "codex-minimax-20261102",
+  "container": "codex-minimax-20261102-seekdb-1",
+  "image": "oceanbase/seekdb@sha256:4db4961869d554313520d6081fca29265ba6da6db7313311bd8acbed771a956b",
+  "tests": {
+    "tests_run": 25,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

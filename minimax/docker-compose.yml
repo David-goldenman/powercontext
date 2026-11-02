@@ -1,0 +1,21 @@
+services:
+  seekdb:
+    image: oceanbase/seekdb@sha256:4db4961869d554313520d6081fca29265ba6da6db7313311bd8acbed771a956b
+    ports:
+      - "127.0.0.1:2946:2881"
+    environment:
+      ROOT_PASSWORD: ""
+      CPU_COUNT: "2"
+      MEMORY_LIMIT: "2G"
+      DATAFILE_SIZE: "2G"
+      LOG_DISK_SIZE: "2G"
+    volumes:
+      - minimax-seekdb:/var/lib/seekdb
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/2881'"]
+      interval: 5s
+      timeout: 3s
+      retries: 40
+      start_period: 25s
+volumes:
+  minimax-seekdb:

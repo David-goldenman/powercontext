@@ -1,0 +1,86 @@
+{
+  "api_called": false,
+  "request_attempted": false,
+  "api_response_received": false,
+  "task": "priority-filter-f5ce0f7937",
+  "timestamp_utc": "20261102T080537193489Z",
+  "status": "VERIFIED",
+  "phase": "complete",
+  "integration": "Qoder desktop built-in MiniMax model",
+  "intended_model": "MiniMax-M3.1-Flash",
+  "model_called": true,
+  "before": [
+    {
+      "command": [
+        "/mnt/d/ob-race/powercontext/minimax/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_regression.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "code_snapshot": "before.py"
+    },
+    {
+      "command": [
+        "/mnt/d/ob-race/powercontext/minimax/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_target.py",
+        "-v"
+      ],
+      "exit_code": 1,
+      "code_snapshot": "before.py"
+    }
+  ],
+  "model_selected": "MiniMax-M3.1-Flash",
+  "qoder_task": "23126d68-56c0-4bed-80d1-2b403d4825c3",
+  "qoder_task_state": "success",
+  "qoder_iterations": 6,
+  "qoder_elapsed_seconds": 48,
+  "model_selection_evidence": "model-selected.jpg",
+  "completion_evidence": "model-completed.jpg",
+  "code_applied": true,
+  "review": "REVIEW.md",
+  "outside_function_ast_unchanged": true,
+  "after": [
+    {
+      "command": [
+        "/mnt/d/ob-race/powercontext/minimax/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_regression.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "code_snapshot": "after.py"
+    },
+    {
+      "command": [
+        "/mnt/d/ob-race/powercontext/minimax/.venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_target.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "code_snapshot": "after.py"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/mnt/d/ob-race/powercontext/minimax/.venv/bin/python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-v"
+  ],
+  "cwd": "/mnt/d/ob-race/powercontext/minimax/_work/baseline-replay-1793607344541774819",
+  "exit_code": 1,
+  "code_snapshot": "before.py",
+  "current_business_code_unchanged": true,
+  "tests": {
+    "tests_run": 10,
+    "failures": 5,
+    "errors": 0,
+    "skipped": 0
+  }
+}

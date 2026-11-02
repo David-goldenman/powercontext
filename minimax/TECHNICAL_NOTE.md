@@ -1,15 +1,15 @@
-# 一页技术说明：面向局部演进的 SDD 上下文
+# 一页技术说明：SDD 上下文驱动的实际代码演进
 
-**当前状态**：基础工程已准备，实际 MiniMax API 参与和目标代码修改待用户获得凭据与可用额度。业务样例为本次新建，不能把目标功能未实现称作历史缺陷，不能以此交付声称 20 分完成。
+**任务与结果**：在本次新建的任务列表业务中，用MiniMax完成min_priority包含下界筛选，保持状态筛选、排序、返回副本和空集行为。相同5项目标测试修改前因功能未实现失败，修改后全部通过；5回归保持通过；完整25项本地测试通过。官方20分待提交与评测。
 
-**数据流**：task id + manifest → 文件来源校验 → seekdb `minimax_sdd.sdd_documents` → 参数化 SQL 查询 → 规格/代码/测试与来源行号 → PowerContext 保存状态的读取 → 开发上下文和下一步动作 →（待执行）MiniMax 代码修改 → 同组测试 → PowerContext 保存验证状态。
+**数据流**：task id＋manifest → 校验真实文件 → seekdb存储与参数化SQL查询 → 带原文/路径/符号/行号的规格、代码、测试 → 读取PowerContext已保存待办并注入next_action → Qoder中指定MiniMax-M3.1-Flash → 代码提案 → 独立审阅 → 应用与冻结测试 → 重新导入代码 → PowerContext保存验证状态 → 新进程读取。
 
-**seekdb 的实际分工**：保存四个完整工程源文件，按 task id/position 查询。导入以事务替换该任务全部资料。v1 与 v2 规格均为真实文件，重新导入 v2 后查询采用新内容和新路径。上下文内容取自 SQL 返回行，不采用固定答案；文件丢失或与导入内容不一致时拒绝输出，要求重新导入。精确 manifest 依赖集是本样例的选择方法，不冒充全仓语义检索。
+**seekdb分工**：专属minimax_sdd.sdd_documents保存四个完整源文件，按task/position检索。导入事务替换任务全部资料，v1→v2采用更新规格；来源不存在或变旧时拒绝输出。manifest为本样例的精确依赖集，未声称全仓语义检索。真实查询结果直接进入模型提示词，既不是硬编码答案，也不只是连接测试。
 
-**PowerContext 的实际分工**：使用参赛 fork `David-goldenman/powercontext` 固定提交 `1be152d6` 的真实 `SQLiteProfile`、`ScopeApplication`、`ScopeBindingKey` 与版本化 `ScopeMutation`，原始来源为 OceanBase 官方项目。task binding 指向 Scope，summary 保存 completed/todo/verification。每个进程打开/关闭真实持久化后端，后续进程用同一 binding 读取状态，再把 todo 注入 `next_action`，不依赖驻留内存或 JSON 文件替代状态库。
+**PowerContext分工**：使用参赛fork固定1be152d6的真实SQLiteProfile、ScopeApplication、ScopeBindingKey及版本化ScopeMutation，注明原始官方来源。Scope summary保存completed/todo/verification，后续独立进程读取相同binding，把todo用于next_action。实际模型输入含恢复的待办；验证后在同Scope写入完成状态，并在新进程读回更新代码与结果。
 
-**业务验证任务**：保持状态筛选、priority 降序/id 升序、复制结果和空集行为；新增整数 1..5 的包含式 min_priority 筛选，排除 bool，且空输入也先验证参数。基线对非 None 参数明确抛 NotImplementedError。5 个回归测试应 GREEN，5 个目标测试应因缺失新功能 RED；后续 MiniMax 必须修改同一业务代码、保持同组测试不变并全部 GREEN。
+**MiniMax分工**：实际通过Qoder桌面内置指定MiniMax-M3.1-Flash生成完整after.py，仅改list_tasks。模型选择与完成截图、公开对话、SQL上下文、before/after和diff均交付。使用已有Qoder访问权限，没有直连MiniMax个人API；api_called=false与model_called=true按此区分，未伪造API响应标识。
 
-**MiniMax 的预定分工**：默认 prepare-only，输出真实提示词；未来 `--execute` 请求一次并保存公共代码提案、diff、模型/响应标识和分阶段回执，随后停止。父级实际审阅代码后才另行 `--apply-reviewed`，该步骤不是 Python 沙箱。测试子进程不继承密钥，前后核对冻结测试正文，并要求回归/目标各 5 项、无 skip、全部通过。私有思维链、密钥和认证头不进入记录。当前没有真实模型结果。
+**审阅和测试**：模型只写提案，未执行代码或修改测试。父级完整读取代码，确认指定函数外AST、签名、冻结测试不变后，另行--apply-reviewed。测试子进程不继承模型密钥，校验正文、用例数量与skip；该流程不声称为沙箱。非法参数在扫描前验证，因此空输入也满足v2约束。
 
-**可审计证据**：`scripts/verify_foundation.py` 生成版本、命令/退出码、基线快照、完整测试输出、真实 SQL 结果、空状态、新进程恢复及总结。所有临时数据仅在本目录，数据库写入限定专属 schema；不重启服务、不修改核心源码或共享 venv。
+**复现与证据**：README提供独立venv、固定SDK克隆、官方seekdb Compose、初始化、CLI、状态复用及完整测试命令；_work内可用相同冻结测试独立重放修改前RED。实际材料位于logs/minimax-prepared-20261102T080537193489Z，目录名保留初始prepare阶段；后续status已记录真实模型及应用结果。私有思维链、凭据和认证头不进入交付。

@@ -1,0 +1,32 @@
+[
+  {
+    "name": "full-suite-green",
+    "command": [
+      "/mnt/d/ob-race/powercontext/minimax/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "exit_code": 0,
+    "timestamp_utc": "2026-11-02T08:11:43.152156+00:00",
+    "code_snapshot": "after.py"
+  },
+  {
+    "name": "after-context-new-process",
+    "command": [
+      "/mnt/d/ob-race/powercontext/minimax/.venv/bin/python",
+      "context_cli.py",
+      "--store",
+      "runtime/priority-filter-f5ce0f7937.sqlite3",
+      "context",
+      "--task",
+      "priority-filter-f5ce0f7937"
+    ],
+    "exit_code": 0,
+    "timestamp_utc": "2026-11-02T08:11:49.222735+00:00",
+    "code_snapshot": "after.py"
+  }
+]

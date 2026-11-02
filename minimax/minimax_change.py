@@ -1,4 +1,4 @@
-"""Future MiniMax proposal followed by a separate, explicit reviewed-code apply step."""
+"""Optional direct MiniMax API proposals and a separate reviewed-code apply step."""
 from __future__ import annotations
 
 import argparse

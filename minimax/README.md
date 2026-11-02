@@ -1,126 +1,98 @@
-# MiniMax × OceanBase：SDD 上下文基础
+# MiniMax × OceanBase：SDD 工程上下文与真实代码演进
 
-当前交付是**真实可运行的基础工程，MiniMax 实际参与仍待 API 与可用额度**。本次没有调用 MiniMax，没有实现待模型修改的优先级筛选，也没有声称赛题完成或取得 20 分。
+本项目把规格、业务代码和测试导入 seekdb，结合真实 PowerContext Scope 状态构造开发上下文，并通过 Qoder 中明确选择的 **MiniMax-M3.1-Flash** 完成了一次代码修改。修改已独立审阅并应用；同一组目标测试从5项失败变为5项通过，原有5项回归保持通过，完整25项测试通过。官方20分仍待正式提交与评测。
 
-最新独立环境实跑证据：[summary.json](logs/foundation-20261102T074727445829Z/summary.json)、[命令与退出码](logs/foundation-20261102T074727445829Z/commands.json)、[SDK/依赖版本](logs/foundation-20261102T074727445829Z/versions.json)。20 项基础与回归通过，5 项待新增功能明确 RED；验证脚本退出 0，完整测试集按预期退出 1。
+最新实跑材料位于 [logs/minimax-prepared-20261102T080537193489Z](logs/minimax-prepared-20261102T080537193489Z)：[结果汇总](logs/minimax-prepared-20261102T080537193489Z/submission-summary.json)、[MiniMax上下文](logs/minimax-prepared-20261102T080537193489Z/context.json)、[代码差异](logs/minimax-prepared-20261102T080537193489Z/change.diff)、[完整测试](logs/minimax-prepared-20261102T080537193489Z/full-suite-green.txt)、[状态恢复](logs/minimax-prepared-20261102T080537193489Z/after-context-new-process.txt)。目录名保留最初 prepare-only 阶段的名称；后续真实模型调用、审阅和应用状态见 status.json。
 
-`sample/tasks.py` 是为本次任务新建的小型业务基线。它已有状态筛选、排序和复制返回值；`min_priority` 是预留的新功能，非 None 时明确抛出 `NotImplementedError`，不是发现的历史缺陷。目标测试将该情况报告为明确的功能断言失败。
+完整25项还在全新官方 seekdb 1.4.0.0 镜像上通过；测试前专属数据库不存在，见 [官方镜像验证](logs/minimax-prepared-20261102T080537193489Z/stock-seekdb-validation.json)及[原始输出](logs/minimax-prepared-20261102T080537193489Z/stock-seekdb-full-suite.txt)。修改前独立目录重放结果见 [baseline-isolated-replay.json](logs/minimax-prepared-20261102T080537193489Z/baseline-isolated-replay.json)。
 
-## 环境与依赖
+## 从干净环境运行
 
-- Linux/WSL Ubuntu，Python ≥3.11（实测 Python 3.12.16）；依赖版本固定于 `requirements.txt`。
-- 已运行、允许创建 `minimax_sdd` 数据库的 seekdb MySQL 协议服务。实测为 WSL `127.0.0.1:2896`，root 空密码；模块只创建/修改专属 `minimax_sdd.sdd_documents`，不会启动、停止或配置服务。
-- 使用真实 PowerContext SDK，而非自行仿制的状态库。[官方项目](https://github.com/oceanbase/powercontext/tree/2026-competition-ecosystem)为原始来源；本次固定版本是[参赛 fork 的 2026-competition 分支提交](https://github.com/David-goldenman/powercontext/tree/1be152d62a4c6df59709f15b184c6b93085fb76f) `1be152d62a4c6df59709f15b184c6b93085fb76f`，不能称为官方仓库提交。
-- 测试和基础上下文不需要任何模型 API，也不读取 `MINIMAX_API_KEY`。
-
-从当前目录执行以下 Bash 命令。`bootstrap.sh` 默认把固定版本参赛 fork 克隆到本目录的 `_work/powercontext`，并建立本目录 `.venv`；不会修改其他环境。已有源码时可设置 `POWERCONTEXT_SOURCE=/absolute/path/to/checkout`。
+需要 Linux/WSL、Python≥3.11、Git；使用自带数据库部署方式时还需要 Docker Compose。实测 Python 3.12.16，依赖固定于 requirements.txt。命令从本 minimax/ 目录执行。
 
 ```bash
+# 可选：独立的官方 seekdb 镜像，绑定本机2946端口，不影响已有数据库。
+docker compose -p minimax-sdd-demo up -d --wait
+
 PYTHON_BIN=python3.12 bash scripts/bootstrap.sh
 export PYTHONPATH="$PWD/_work/powercontext/src"
 export PYTHONDONTWRITEBYTECODE=1
-export SEEKDB_HOST=127.0.0.1 SEEKDB_PORT=2896 SEEKDB_USER=root SEEKDB_DATABASE=minimax_sdd
-# 若你的服务设置了密码，自行在环境中设置 SEEKDB_PASSWORD；不要写进日志或提交。
-.venv/bin/python scripts/verify_foundation.py
+export SEEKDB_HOST=127.0.0.1 SEEKDB_PORT=2946 SEEKDB_USER=root SEEKDB_DATABASE=minimax_sdd
+.venv/bin/python -m unittest discover -s tests -v
 ```
 
-本机已有源码的执行方式：
+默认数据库配置不设密码，仅绑定本机隔离开发端口。已有 seekdb 时可跳过 Compose 并设置其地址、端口及 SEEKDB_PASSWORD。CLI只允许专属数据库 minimax_sdd，不启动或停止现有服务。.env.example 仅为环境变量示例，CLI不会自动加载 .env。
+
+bootstrap.sh 在本目录建立独立 .venv，并克隆固定参赛 fork 提交 `1be152d62a4c6df59709f15b184c6b93085fb76f` 至 _work/powercontext；不依赖本机其他工作目录。SDK使用[原始官方项目](https://github.com/oceanbase/powercontext)的真实 SQLiteProfile/ScopeApplication；固定版本来自[参赛fork](https://github.com/David-goldenman/powercontext/tree/1be152d62a4c6df59709f15b184c6b93085fb76f)，不能称为官方提交。依赖或网络安装问题的历史排查见 [logs/SETUP.md](logs/SETUP.md)。
+
+## 验证样例与入口
+
+业务样例为本次新建的小型任务列表。初始数据位于 sample/tasks.py：id 1/open/priority2，id2/open/4，id3/done/4，id4/open/1。
+
+- 保持行为：按 priority 降序、id升序返回 `[2,3,1,4]`；open筛选返回 `[2,1,4]`；结果为副本，不修改输入。
+- 实际新增：min_priority为包含下界，3返回 `[2,3]`，与open及4组合返回 `[2]`；1包含全部，5返回空集。
+- 参数：仅接受整数1..5并排除bool；0、6、负数、浮点和字符串均ValueError，包括空任务输入。
+
+必要来源由 sample/manifest-v1.json、manifest-v2.json 明确列出：适用规格、sample/tasks.py::list_tasks、tests/test_target.py及tests/test_regression.py。输出携带完整原文、真实路径、符号及行号。
 
 ```bash
-cd /mnt/d/ob-race/powercontext/minimax
-export PYTHONPATH=/mnt/d/ob-race/powercontext-evidence/src
-export PYTHONDONTWRITEBYTECODE=1
-.venv/bin/python scripts/verify_foundation.py
+.venv/bin/python context_cli.py import --task review-example --manifest sample/manifest-v1.json
+.venv/bin/python context_cli.py context --task review-example
+
+# 更新规格后重新导入，输出必须采用spec-v2.md及新增的空输入验证条款。
+.venv/bin/python context_cli.py import --task review-example --manifest sample/manifest-v2.json
+.venv/bin/python context_cli.py context --task review-example
+
+# 两次命令是两个独立进程；后一次把保存的todo用于next_action。
+.venv/bin/python context_cli.py --store runtime/review-example.sqlite3 save-state --task review-example \
+  --completed 'Imported active specification' --todo 'Review MiniMax diff and run unchanged tests' \
+  --verification 'Use fixed source and test files'
+.venv/bin/python context_cli.py --store runtime/review-example.sqlite3 context --task review-example
 ```
 
-当前 WSL 的旧代理不可用，直接下载包文件也曾超时；实际采用 Windows 下载官方 Linux wheel、WSL 本地安装的方式验证独立环境。可在 Windows PowerShell 从本模块目录执行（代理参数仅在确有可用本地代理时添加，不改全局设置）：
+每次导入按task在事务中替换全部资料。上下文真正来自参数化SQL查询结果；源文件不存在或与导入原文不一致时明确拒绝输出，要求重新导入。选择方式是任务manifest的精确依赖集，未声称全仓语义检索。
 
-```powershell
-New-Item -ItemType Directory -Force _work/tmp,_work/pip-cache,_work/wheels | Out-Null
-$env:TEMP="$PWD/_work/tmp"; $env:TMP=$env:TEMP; $env:PIP_CACHE_DIR="$PWD/_work/pip-cache"
-python -m pip download --index-url https://pypi.org/simple --proxy http://127.0.0.1:7890 `
-  --platform manylinux_2_17_x86_64 --platform manylinux2014_x86_64 `
-  --platform manylinux_2_27_x86_64 --platform manylinux_2_28_x86_64 `
-  --python-version 312 --implementation cp --abi cp312 --only-binary=:all: `
-  -r requirements.txt --dest _work/wheels
-```
+PowerContext以 ScopeBindingKey(integration='minimax-sdd',kind='task',external_id=task) 定位版本化Scope，在真实SQLite持久化中保存 completed/todo/verification。JSON是Scope summary字段内容，不是JSON文件替代状态库。实际任务沿用同一Scope，并在新进程中读回完成状态及更新后的代码资料。
 
-随后在 WSL 独立 `.venv` 中执行 `.venv/bin/python -m pip install --no-index --find-links _work/wheels -r requirements.txt`，并运行同一验证脚本。Ubuntu 22.04 满足这些 manylinux wheel 的 glibc 要求。下载/安装原始结果保存在 `logs/windows-wheel-download-sdk-closure.txt` 和 `logs/independent-venv-install-sdk-closure.txt`。
+## MiniMax 实际参与与审阅
 
-基础验证脚本自身期望退出 0；它要求业务回归 5 项通过、上下文真实集成 7 项通过、适配器离线测试 8 项通过，同时目标新功能 5 项明确失败，共运行 25 项。完整 `unittest discover` 的实际退出码应为 1，因为目标尚未实现；此状态会如实写入日志，拒绝零用例或跳过测试。`logs/foundation-*/commands.json` 保存每条实际命令、退出码、UTC 时间和基线代码版本；同目录 `versions.json`、源码快照、原始测试输出和 `summary.json` 形成审阅证据。
+实际接入方式为 **Qoder桌面端内置的指定MiniMax模型**，不是Auto路由，也没有使用其他模型代替这一步。模型选择规则见[Qoder官方文档](https://docs.qoder.com/qoder/model-selector)。本次无需MiniMax个人API密钥；记录中的 api_called=false 表示没有直连MiniMax API，model_called=true 表示实际通过Qoder调用了指定模型。
 
-## 调用入口与输入输出
+实际Qoder会话：`23126d68-56c0-4bed-80d1-2b403d4825c3`，2026-11-02 16:07，界面成功状态48秒/6次模型迭代。证据包括：
+
+- [实际模型选择截图](logs/minimax-prepared-20261102T080537193489Z/model-selected.jpg)和[实际完成截图](logs/minimax-prepared-20261102T080537193489Z/model-completed.jpg)。
+- [提交给助手的请求](logs/minimax-prepared-20261102T080537193489Z/QODER_REQUEST.txt)、[真实检索上下文与提示词](logs/minimax-prepared-20261102T080537193489Z/prompt.txt)、[可见对话导出](logs/minimax-prepared-20261102T080537193489Z/dialogue-visible.txt)。
+- [修改前源码](logs/minimax-prepared-20261102T080537193489Z/before.py)、[MiniMax提案](logs/minimax-prepared-20261102T080537193489Z/after.py)、[统一diff](logs/minimax-prepared-20261102T080537193489Z/change.diff)和[独立审阅](logs/minimax-prepared-20261102T080537193489Z/REVIEW.md)。
+- status.json 内前后测试命令、退出码、对应源码快照及真实状态；frozen-tests/保留相同测试正文。
+
+流程为：检索真实上下文并读取先前待办 → 选定MiniMax → 只生成after.py提案并停止 → 父级完整审阅源码和diff → 使用独立 --apply-reviewed 步骤应用并运行冻结测试 → 重新导入代码并把验证结果写回PowerContext → 新进程读取。
+
+模型没有运行命令或测试，没有直接改动业务文件或测试。应用步骤执行经过审阅的本地Python，未声称为沙箱；测试子进程不继承模型密钥，运行前后检查冻结测试正文、实际数量及跳过情况。记录不要求或保留模型私有思维链、密钥或认证头。
+
+minimax_change.py 的默认模式仍只准备上下文，不调用模型。可再次执行 `--task`及`--store`对应任务生成新提示词，再交给Qoder中明确选择的MiniMax。脚本的可选 --execute 是另一条直连MiniMax官方API路径，需要用户已有密钥和额度，且预检要求目标尚未实现的基线；它不是本次实际使用的接入方式。
+
+## 测试与修改前复现
+
+当前代码直接运行完整测试，预期25项通过、退出0：5回归+5目标+7真实DB/PowerContext集成+8适配器离线边界。实际原始输出见 full-suite-green.txt。历史基础阶段曾有5项目标功能失败；这些日志保留真实阶段，未改写为通过。scripts/verify_foundation.py 是旧基线的专用历史验证器，当前完成后的代码请运行上面的完整测试入口。
+
+可在本模块 _work/ 的独立目录重放修改前测试，不替换当前业务代码：
 
 ```bash
-# 输入 task id 和实际文件清单；导入四个完整源文件到真实 seekdb。
-.venv/bin/python context_cli.py import --task priority-filter --manifest sample/manifest-v1.json
-.venv/bin/python context_cli.py context --task priority-filter
-
-# 规格变化后重新导入；查询结果应出现 v2 内容和 sample/spec-v2.md 来源。
-.venv/bin/python context_cli.py import --task priority-filter --manifest sample/manifest-v2.json
-.venv/bin/python context_cli.py context --task priority-filter
-
-# 保存阶段状态，然后用另一进程读取并用于 next_action。
-.venv/bin/python context_cli.py save-state --task priority-filter \
-  --completed 'Baseline regression passed' \
-  --todo 'Use MiniMax to implement min_priority after API/quota become available' \
-  --verification 'Target feature remains RED'
-.venv/bin/python context_cli.py context --task priority-filter
+replay_dir="$PWD/_work/baseline-replay-$(date +%s)"
+minimax_python="$PWD/.venv/bin/python"
+proof="logs/minimax-prepared-20261102T080537193489Z"
+mkdir -p "$replay_dir/sample" "$replay_dir/tests"
+cp sample/__init__.py "$replay_dir/sample/__init__.py"
+cp "$proof/before.py" "$replay_dir/sample/tasks.py"
+cp "$proof/frozen-tests/test_regression.py" "$proof/frozen-tests/test_target.py" "$replay_dir/tests/"
+(cd "$replay_dir" && "$minimax_python" -m unittest discover -s tests -v)
+# 预期退出1：5回归通过，5目标因新功能未实现而失败，无环境错误。
 ```
 
-输出 JSON 包含 `sources[].kind/path/symbol/line_start/line_end/content`、实际查询 SQL/参数/返回行数、`state` 和由已保存 todo 得出的 `next_action`。代码和测试均来自 seekdb 查询结果。构造上下文时还检查文件确实存在且内容未过期；若磁盘文件改变，先重新导入。它不会在 DB 不可用时返回硬编码样例。
+重新导入任一新task和新的 --store 路径即可重放空状态，不删除已有数据。当前业务文件与 after.py一致；before.py保存新增筛选前的真正可运行基线。目标及回归测试在实际修改前后保持原样。
 
-每次导入按 task 在事务中替换其全部文档，避免 v1 或已移除来源继续出现。选材策略是显式 task manifest 的精确依赖集，适合本例；不宣称具备任意仓库的语义检索能力。路径必须留在本模块内，数据库名固定允许 `minimax_sdd`。
+## 范围、来源与成绩
 
-PowerContext 状态默认位于 `runtime/task-state.sqlite3`，支持全局参数 `--store runtime/another.sqlite3`（放在子命令前）。真实使用 `SQLiteProfile` + `ScopeApplication`，以 `ScopeBindingKey(integration='minimax-sdd',kind='task',external_id=task)` 解析任务，并通过版本化 Scope summary 保存 completed/todo/verification。这里的结构化 JSON 是 Scope 中的字段内容，不是 JSON 文件替代 PowerContext。跨进程读写测试会检查 Scope id 一致、进程 id 不同、下一步动作采用保存的 todo。
+业务代码、规格、测试和上下文适配器为本次任务编写。PowerContext用法参考固定fork的Scope测试与实现，原项目Apache-2.0；依赖版本与数据来源见日志。官方镜像固定digest见docker-compose.yml。一页技术说明见 [TECHNICAL_NOTE.md](TECHNICAL_NOTE.md)。
 
-## 验证样例与固定测试
-
-必要来源为 `sample/spec-v2.md` 的 SDD-BASE-1..3 / SDD-NEW-1..4、`sample/tasks.py::list_tasks`、`tests/test_regression.py::RegressionTests`、`tests/test_target.py::TargetTests`。清单文件列明全部来源；上下文附上完整内容和真实行号。
-
-- 初始任务数据：id 1/open/priority 2，id 2/open/4，id 3/done/4，id 4/open/1。
-- 保持：默认按 priority 降序、id 升序得 `[2,3,1,4]`；open 筛选得 `[2,1,4]`；返回副本、不改输入。
-- 待新增：`min_priority=3` 得 `[2,3]`；`status='open',min_priority=4` 得 `[2]`；边界 1 包含全部、5 得空结果。
-- 待新增验证：只接受整数 1..5，排除 bool；0、6、负数、浮点与字符串均 ValueError，空任务也先验证参数。
-
-```bash
-.venv/bin/python -m unittest discover -s tests -p test_regression.py -v  # 退出0
-.venv/bin/python -m unittest discover -s tests -p test_target.py -v      # 基线退出1，5项功能失败
-.venv/bin/python -m unittest discover -s tests -p test_context.py -v     # 真实DB/PC，退出0
-.venv/bin/python -m unittest discover -s tests -p test_adapter.py -v     # 离线解析边界，退出0
-.venv/bin/python -m unittest discover -s tests -v                       # 基线退出1，仅目标5项失败
-```
-
-基础脚本使用唯一 task id 和全新 SQLite 文件，可以重复执行而不删除已有状态或其他项目数据。人工复现空状态时也使用新的 `--task` 和 `--store runtime/new-name.sqlite3`。后续模型修改后，可从本次运行的 `logs/foundation-*/baseline_tasks.py` 还原 `sample/tasks.py` 再重新导入，无需删除任何数据库。不要重置其他目录或服务。
-
-## 未来 MiniMax 实际修改
-
-当前默认调用只生成真实上下文及提示词，不读模型密钥、不联网、不写业务代码：
-
-```bash
-.venv/bin/python minimax_change.py --task priority-filter
-```
-
-用户取得 API 与现有可用额度后，自行把 `MINIMAX_API_KEY`、`MINIMAX_MODEL` 放入环境，确认额度后设置 `MINIMAX_QUOTA_CONFIRMED=1`，再执行：
-
-```bash
-.venv/bin/python minimax_change.py --task priority-filter --execute
-```
-
-`--execute` 会发起一次真实请求并保存提案后停止，实际产生 API 消耗；本次未执行。它不会自动运行生成代码。脚本按 [MiniMax 官方 OpenAI 兼容文档](https://platform.minimax.cn/docs/api-reference/text-openai-api) 使用 `/v1/chat/completions`，模型名由用户当前方案提供；默认中国官方端点，也支持环境指定国际官方端点 `https://api.minimax.io/v1/chat/completions`。传输协议依据 2026-11-02 官方文档编写，真实账号权限与请求仍待实测。
-
-请求使用真实上下文及恢复的待办，模型必须返回仅修改 `sample/tasks.py` 的完整代码 JSON。脚本保留提示词、基线/提案源码、统一 diff、模型 id/响应 id/usage 和基线测试输出。请求开始、响应收到、解析拒绝与失败阶段都有即时状态记录，不能把网络尝试当作模型成功参与。它丢弃 `reasoning_content` 和 `<think>` 内容，不保存原始响应、密钥或 HTTP 认证头。失败无自动付费重试、开户或购买行为。
-
-提案状态为 `PROPOSAL_AWAITING_REVIEW`。当前开发助手/父级实际读过 `after.py` 和 `change.diff`，确认修改仅限规定函数、无文件/网络/进程等额外行为后，才执行独立步骤（使用提案对应的同一 task/store）：
-
-```bash
-.venv/bin/python minimax_change.py --task priority-filter --apply-reviewed logs/minimax-real-实际运行目录
-```
-
-该步骤执行的是经过审阅的本地 Python，并不是 Python 沙箱。测试子进程仅获最小白名单环境，不继承任何模型 API 密钥；脚本逐份核对冻结的原始测试正文，在运行前后检查没有变更，要求回归和目标各实际运行 5 项且无 skip，然后保存测试输出和退出码。仅有进程退出 0 不能标记 `VERIFIED`。当前基础交付不会执行任何模型提案或恶意测试载荷。
-
-目标和回归通过后才能核实代码修改有效；失败结果会保存并写回 PowerContext，供下一轮恢复使用。必须审阅真实模型记录与 diff 后再固定提交。此时尚未满足“MiniMax 实际参与”和“代码修改有效”两项必做验收，整个赛题仍未完成。
-
-## 材料范围和来源
-
-业务代码、规格、测试与上下文适配器为本次新写；PowerContext API 用法参考固定参赛 fork 的 `tests/builtin/test_scope_application.py` 和 `src/powercontext/builtin/scope/application.py`，原项目 Apache-2.0。数据库版本与 Python 包精确版本见实跑 `versions.json`/导入日志。没有读取正式评测 SciFact 标签。`TECHNICAL_NOTE.md` 为一页技术说明，`DESIGN.md`/`PLAN.md` 为范围与执行记录。
+本地验证及真实MiniMax参与已形成材料，正式提交和官方20分尚未确认。未创建账号或购买额度，未把网站发布或本地测试当作官方成绩。

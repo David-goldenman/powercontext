@@ -1,0 +1,10 @@
+test_combines_status_and_priority (test_target.TargetTests.test_combines_status_and_priority) ... ok
+test_inclusive_threshold (test_target.TargetTests.test_inclusive_threshold) ... ok
+test_invalid_values_rejected_even_on_empty_input (test_target.TargetTests.test_invalid_values_rejected_even_on_empty_input) ... ok
+test_valid_boundaries (test_target.TargetTests.test_valid_boundaries) ... ok
+test_valid_filter_on_empty_input (test_target.TargetTests.test_valid_filter_on_empty_input) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.000s
+
+OK

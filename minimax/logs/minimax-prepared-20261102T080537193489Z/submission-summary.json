@@ -1,0 +1,24 @@
+{
+  "status": "LOCAL_SUBMISSION_VERIFIED",
+  "model_integration": "Qoder desktop built-in MiniMax-M3.1-Flash",
+  "direct_minimax_api_called": false,
+  "model_called": true,
+  "full_suite": {
+    "tests_run": 25,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "before_target_failures": 5,
+  "after_target_passed": 5,
+  "regression_passed": 5,
+  "frozen_tests_unchanged": true,
+  "database_rows_returned": 4,
+  "old_context_process": 1895852,
+  "new_context_process": 1907509,
+  "scope_id": "scp_5pppmry9rw1vs0b69rsdp0p5yx",
+  "scope_version_before": 1,
+  "scope_version_after": 2,
+  "updated_source_used": true,
+  "official_score_verified": false
+}
