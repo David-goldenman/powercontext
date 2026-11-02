@@ -1,0 +1,46 @@
+
+> evidence-desk@1.0.0 test
+> node --test tests/evidence-core.test.js tests/persist-queue.test.js tests/http-robustness.test.js tests/db-failure.test.js tests/api-integration.test.js
+
+✔ 启动真实服务进程并连接 seekdb (223.3952ms)
+✔ health 报告真实 seekdb 版本与专有库名 (28.1116ms)
+✔ 导入笔记写入数据库并可列出 (32.1987ms)
+✔ 检索返回带真实来源 URL 与匹配片段的证据卡 (17.6138ms)
+✔ 输入校验：非法 URL / 空标题 / 过短正文返回 400 (15.9841ms)
+✔ 进度校验：非法状态与越界百分比返回 400，未知 id 返回 404 (73.7825ms)
+✔ SQL 注入式输入被当作字面量，表结构不受影响 (59.9387ms)
+✔ LIKE 通配符与百分号输入不会泄漏全库内容 (17.0362ms)
+✔ 候选超过单页时游标分页全量扫描：位于后页的最佳条目不得丢失（回归：无序 LIMIT 截断） (572.4275ms)
+✔ 列表 limit 参数钳制为整数：1.5/Infinity/-3/abc/0 均返回 200 而非 SQL 语法错误 (92.8714ms)
+✔ 阅读进度更新后，杀掉服务进程重新拉起仍然保留（真实重启持久化） (202.2451ms)
+✔ 状态过滤：按 status 查询只返回对应状态笔记 (17.344ms)
+✔ 静态页面可访问：展示页 / 应用页 / 样例 JSON (45.5795ms)
+✔ 路径穿越请求不会泄露 public 之外的文件 (0.9629ms)
+✔ 清理测试数据并关闭服务 (47.9648ms)
+✔ 服务启动时数据库不可用：进程以非零退出码失败，不提供服务 (131.8466ms)
+✔ 运行中的服务遇到死库：API 返回 500 与真实错误信息，绝不返回 ok:true 或假数据 (140.3137ms)
+✔ tokenizeTerms：过滤停用词与短词、去重、限量 (1.1288ms)
+✔ makeSnippet：命中词周围截取并加省略号 (0.2362ms)
+✔ makeSnippet：未命中时返回开头文本且 matchedTerm 为 null (0.1051ms)
+✔ searchNotes：标题命中权重高于正文，按得分降序 (0.2338ms)
+✔ searchNotes：证据卡携带真实来源 URL 与匹配片段、匹配词 (0.1695ms)
+✔ searchNotes：空查询或全停用词查询返回空数组 (0.8282ms)
+✔ searchNotes：大小写不敏感 (0.1383ms)
+✔ Host: [ 的原始请求得到合法 HTTP 响应而非进程崩溃 (10.8621ms)
+✔ 恶意请求行（含 CRLF 注入尝试的 Host 头变体）不产生第二个响应头错乱 (3.0215ms)
+✔ 非法 Host 请求之后，服务仍然存活并可继续正常响应静态页 (2.9255ms)
+✔ 绝对形式请求行也可正常路由（固定 base 解析） (2.4456ms)
+✔ 防抖窗口内两次 schedule 合并为一次保存，且保存最新快照 (63.1472ms)
+✔ 关闭时 flush 后，旧定时器不得触发第二次保存（回归：立即关闭丢进度） (91.2842ms)
+✔ A→B 快速切换：各笔记补丁按 id 归属，不得互相冒领（回归：A 的 timer 当成 B） (0.4293ms)
+✔ 同一笔记并发 flush 串行执行：saveFn 不重入，顺序与补丁一致 (62.4509ms)
+✔ 保存失败回调携带正确 id 与错误，队列后续仍可保存 (0.6775ms)
+✔ flush 未知/无待保存 id：不产生保存，返回可等待的 Promise (0.1748ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1601.6589

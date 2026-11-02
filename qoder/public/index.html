@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>科研证据卡 Evidence Desk — 让每条笔记都带着出处</title>
+<meta name="description" content="面向阅读论文和课程资料的学生：导入研究笔记，检索带真实来源与匹配片段的证据卡，跟踪阅读进度。存储与查询由 seekdb（MySQL 协议）真实承载。">
+<link rel="stylesheet" href="style.css">
+<script src="evidence-core.js" defer></script>
+<script src="demo.js" defer></script>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <h1>科研证据卡 · Evidence Desk</h1>
+    <p class="tag">读论文、上课程时做的笔记，两周后还能找回「这句话出自哪里、原话怎么说的、我读到哪了」。</p>
+    <div class="badge-row">
+      <span class="badge">seekdb（OceanBase，MySQL 协议）真实存储与检索</span>
+      <span class="badge">Node.js LTS + mysql2，零框架</span>
+      <span class="badge">开源可自托管</span>
+    </div>
+    <div style="margin-top:28px; display:flex; gap:12px; flex-wrap:wrap;">
+      <a class="btn" href="#demo">体验内置样例演示</a>
+      <a class="btn" href="https://github.com/David-goldenman/powercontext/tree/2026-competition-ecosystem/qoder" style="background:#fff;color:var(--accent);" target="_blank" rel="noopener">GitHub 仓库</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2 class="sec">解决什么痛点</h2>
+    <p class="sec-sub">写综述和复习时最常见的三件事：</p>
+    <div class="grid cols-3">
+      <div class="card"><span class="ico">🔗</span><h3>笔记丢了出处</h3><p>摘抄和感想混在一起，写到论文里想引用时，已经不记得这段是转载哪篇文献、哪一页。证据卡强制每张卡携带标题 + 原始 URL + 匹配片段，出处永远可回溯。</p></div>
+      <div class="card"><span class="ico">🔁</span><h3>重复检索浪费时间</h3><p>同一个概念在不同资料里出现过，但只能靠翻文件夹和回忆。输入关键词，一次检索全部笔记，按匹配得分排序，命中的原文片段直接高亮展示。</p></div>
+      <div class="card"><span class="ico">📖</span><h3>阅读进度会丢</h3><p>长文档读到一半，下次打开又从头找起。未读 / 阅读中 / 已读三态加百分比进度保存在数据库里，关掉浏览器、重启服务都还在。</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:#eef1f8;">
+  <div class="wrap">
+    <h2 class="sec">核心功能</h2>
+    <div class="grid cols-3">
+      <div class="card"><h3>① 导入带出处的研究笔记</h3><p>标题、URL、正文一次录入，服务端校验后以参数化 SQL 写入 seekdb。</p></div>
+      <div class="card"><h3>② 检索证据卡</h3><p>SQL 层 LIKE 初筛候选，应用层按词频加权评分，截取命中词周围的真实原文片段，生成带来源的证据卡。</p></div>
+      <div class="card"><h3>③ 阅读状态与进度</h3><p>阅读器内滚动位置自动换算百分比，三态状态 + 进度持久化在数据库，重启不丢。</p></div>
+      <div class="card"><h3>④ 故障诚实</h3><p>数据库不可用时 API 明确返回 500 错误，绝不返回假数据或空壳成功。</p></div>
+      <div class="card"><h3>⑤ 开箱演示</h3><p>自带 8 篇公开主题的非私人样例笔记，一条命令灌库即可体验完整流程。</p></div>
+      <div class="card"><h3>⑥ 轻依赖跨平台</h3><p>仅一个 npm 依赖（mysql2），Windows / macOS / Linux 均可运行。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="wrap">
+    <h2 class="sec">在线交互样例</h2>
+    <div class="notice sim">
+      ⚠️ <b>本演示是模拟环境</b>：检索逻辑与真实后端共用同一段代码（<code class="inline">evidence-core.js</code>），
+      但数据只加载在本页面的浏览器内存中，<b>没有连接任何数据库</b>，刷新后进度即丢失。
+      真实的存储、检索与进度持久化需要本地运行后端并连接 seekdb，方法见下一节。
+    </div>
+    <div class="searchbox">
+      <input type="search" id="q" placeholder="试试搜索：注意力 / 残差 / 先验 / diffusion / transformer…">
+      <button class="btn" id="go">检索证据卡</button>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div id="results"><div class="empty">输入关键词，从 8 篇公开样例笔记中检索带来源的证据卡。</div></div>
+  </div>
+</section>
+
+<section style="background:#eef1f8;">
+  <div class="wrap">
+    <h2 class="sec">本地真实体验（需 seekdb）</h2>
+    <div class="card">
+      <ol class="steps">
+        <li>确保本机可通过 MySQL 协议访问 seekdb（默认 <code class="inline">127.0.0.1:2896</code>，root 空密码，仅限本地隔离开发）。</li>
+        <li>克隆仓库后进入 <code class="inline">qoder/</code> 目录：<code class="inline">npm install</code></li>
+        <li>复制 <code class="inline">.env.example</code> 为 <code class="inline">.env</code>（默认值即可）。</li>
+        <li>灌入样例数据：<code class="inline">npm run seed</code></li>
+        <li>启动服务：<code class="inline">npm start</code>，打开 <a href="http://127.0.0.1:3210/app" rel="noopener">http://127.0.0.1:3210/app</a> 使用连接真实数据库的完整应用。</li>
+        <li>运行测试验证：<code class="inline">npm test</code>（需 seekdb 在线）。</li>
+      </ol>
+      <p style="margin:0;color:var(--ink-2);font-size:14px;"> GitHub 源码：<a href="https://github.com/David-goldenman/powercontext/tree/2026-competition-ecosystem/qoder" target="_blank" rel="noopener">David-goldenman/powercontext · 2026-competition-ecosystem/qoder</a></p>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    科研证据卡 Evidence Desk · 本项目代码与文档位于 GitHub 上述目录 · 本页面为公开静态展示页，内置演示不连接后端数据库
+  </div>
+</footer>
+
+</body>
+</html>

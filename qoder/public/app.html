@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>科研证据卡 · 应用（连接真实 seekdb 后端）</title>
+<link rel="stylesheet" href="style.css">
+<script src="persist-queue.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+
+<div class="appbar">
+  <div class="wrap">
+    <span class="logo">Evidence Desk</span>
+    <div class="tabs">
+      <button data-tab="search" class="active">检索证据卡</button>
+      <button data-tab="library">笔记库</button>
+      <button data-tab="import">导入笔记</button>
+    </div>
+    <span style="margin-left:auto;font-size:13px;color:var(--ink-2);"><span class="dbdot" id="dbdot"></span><span id="dbstate">检测数据库…</span></span>
+    <a class="btn ghost small" href="./">展示页</a>
+  </div>
+</div>
+
+<div class="wrap" style="padding-top:28px;padding-bottom:60px;">
+
+  <div class="panel active" id="panel-search">
+    <div class="notice info">此页面的检索、阅读进度均通过 HTTP API 读写 <b>真实 seekdb 数据库</b>。刷新页面或重启服务后进度依然保留。</div>
+    <div class="searchbox">
+      <input type="search" id="q" placeholder="输入关键词，例如：注意力 / 残差 / 先验 / transformer">
+      <button class="btn" id="go">检索</button>
+    </div>
+    <div id="results"><div class="empty">等待检索…</div></div>
+  </div>
+
+  <div class="panel" id="panel-library">
+    <div class="chips" style="margin-bottom:16px;">
+      <button class="chip" data-f="">全部</button>
+      <button class="chip" data-f="unread">未读</button>
+      <button class="chip" data-f="reading">阅读中</button>
+      <button class="chip" data-f="read">已读</button>
+    </div>
+    <div id="list"></div>
+  </div>
+
+  <div class="panel" id="panel-import">
+    <form class="note-form card" id="importForm">
+      <label>标题 *</label>
+      <input name="title" maxlength="500" required placeholder="例如：Attention Is All You Need — 精读笔记">
+      <label>来源 URL *</label>
+      <input name="url" required placeholder="https://arxiv.org/abs/1706.03762">
+      <label>正文（笔记/摘录，至少 10 字）*</label>
+      <textarea name="content" required placeholder="粘贴论文摘要、课程讲义或你自己的整理……"></textarea>
+      <div class="rowline" style="margin-top:16px;">
+        <button class="btn" type="submit">保存到 seekdb</button>
+        <button class="btn ghost" type="button" id="loadSample">载入公开样例文本试试</button>
+        <span id="importMsg"></span>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<div class="modal-mask" id="readerMask">
+  <div class="modal">
+    <div class="head">
+      <b id="rTitle"></b>
+      <div>
+        <a id="rLink" href="#" target="_blank" rel="noopener" class="btn ghost small">打开原始来源</a>
+        <button class="close-x" id="rClose">×</button>
+      </div>
+    </div>
+    <div class="body" id="rBody"></div>
+    <div class="foot">
+      <span id="rStatusPill" class="status-pill unread">未读</span>
+      <div class="bar" style="flex:1;min-width:120px;"><i id="rBar" style="width:0%"></i></div>
+      <span id="rPct" style="font-size:13px;color:var(--ink-2);">0%</span>
+      <button class="btn small" id="rRead">标记已读</button>
+      <span id="rSaveMsg" class="ok-msg"></span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

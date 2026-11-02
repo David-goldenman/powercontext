@@ -1,0 +1,19 @@
+{
+  "name": "evidence-desk",
+  "version": "1.0.0",
+  "description": "科研证据卡 Evidence Desk — 带真实出处检索与阅读进度持久化的学习笔记工具（seekdb / MySQL 协议）",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "seed": "node scripts/seed.js",
+    "test": "node --test tests/evidence-core.test.js tests/persist-queue.test.js tests/http-robustness.test.js tests/db-failure.test.js tests/api-integration.test.js",
+    "test:offline": "node --test tests/evidence-core.test.js tests/persist-queue.test.js tests/http-robustness.test.js tests/db-failure.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "mysql2": "^3.24.6"
+  }
+}
