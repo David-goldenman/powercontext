@@ -1,0 +1,35 @@
+✔ a backend 500 marks a previously connected database disconnected (42.4149ms)
+✔ a network error marks the connection disconnected (29.9457ms)
+✔ a missing note is a user-level 404, not a database outage (31.5437ms)
+✔ a successful retry restores the connection without retaining the down class (46.4166ms)
+✖ a tokenless search cannot claim database recovery without a database query (47.1653ms)
+✔ a delayed old health success cannot overwrite a newer failed operation (6.9141ms)
+✔ saved read status and progress update the existing search card after close (40.1888ms)
+✔ an old failed health request cannot erase newer successful search results (14.5051ms)
+✔ marking a note read removes it from the active unread library filter (61.5421ms)
+✔ an older library refresh cannot overwrite a newer status filter (46.2534ms)
+✔ a failed save leaves the persisted card unchanged and reports the failure (46.0383ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 10
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 651.0709
+
+✖ failing tests:
+
+test at tests\ui-state.test.js:141:1
+✖ a tokenless search cannot claim database recovery without a database query (47.1653ms)
+  AssertionError [ERR_ASSERTION]: tokenless response does not prove seekdb recovery
+      at TestContext.<anonymous> (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:150:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

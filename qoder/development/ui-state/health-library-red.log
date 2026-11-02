@@ -1,0 +1,46 @@
+✖ an old health failure cannot contradict a newer successful library request (21.9365ms)
+✖ a successful library recovery clears the earlier startup failure (29.5085ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 261.0451
+
+✖ failing tests:
+
+test at tests\ui-state.test.js:300:1
+✖ an old health failure cannot contradict a newer successful library request (21.9365ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /无法连接/. Input:
+  
+  '无法连接后端/数据库：old health failure。请先运行 npm start 并确认 seekdb 在线。'
+  
+      at TestContext.<anonymous> (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:306:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '无法连接后端/数据库：old health failure。请先运行 npm start 并确认 seekdb 在线。',
+    expected: /无法连接/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at tests\ui-state.test.js:310:1
+✖ a successful library recovery clears the earlier startup failure (29.5085ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /无法连接/. Input:
+  
+  '无法连接后端/数据库：database unavailable。请先运行 npm start 并确认 seekdb 在线。'
+  
+      at TestContext.<anonymous> (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:316:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '无法连接后端/数据库：database unavailable。请先运行 npm start 并确认 seekdb 在线。',
+    expected: /无法连接/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }

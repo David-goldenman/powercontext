@@ -24,6 +24,10 @@
 </div>
 
 <div class="wrap" style="padding-top:28px;padding-bottom:60px;">
+  <div class="notice" id="saveNotice" role="status" aria-live="polite" hidden>
+    <span class="err" id="saveNoticeText"></span>
+    <button class="btn ghost small" id="retrySaves">重试未保存进度</button>
+  </div>
 
   <div class="panel active" id="panel-search">
     <div class="notice info">此页面的检索、阅读进度均通过 HTTP API 读写 <b>真实 seekdb 数据库</b>。刷新页面或重启服务后进度依然保留。</div>

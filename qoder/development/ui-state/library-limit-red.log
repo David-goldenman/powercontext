@@ -1,0 +1,28 @@
+✖ the library explicitly requests multiple notes rather than inheriting the server's one-row default (37.9616ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 250.8521
+
+✖ failing tests:
+
+test at tests\ui-state.test.js:291:1
+✖ the library explicitly requests multiple notes rather than inheriting the server's one-row default (37.9616ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 2
+  
+      at TestContext.<anonymous> (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:297:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

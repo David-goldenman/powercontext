@@ -1,0 +1,71 @@
+✔ a backend 500 marks a previously connected database disconnected (40.6754ms)
+✔ a network error marks the connection disconnected (30.5701ms)
+✔ a missing note is a user-level 404, not a database outage (30.8993ms)
+✔ a successful retry restores the connection without retaining the down class (45.6503ms)
+✔ a tokenless search cannot claim database recovery without a database query (77.1468ms)
+✔ a delayed old health success cannot overwrite a newer failed operation (8.3887ms)
+✔ saved read status and progress update the existing search card after close (24.4708ms)
+✔ an old failed health request cannot erase newer successful search results (13.9801ms)
+✔ marking a note read removes it from the active unread library filter (60.9467ms)
+✔ an older library refresh cannot overwrite a newer status filter (46.6794ms)
+✖ a failed save leaves the persisted card unchanged and reports the failure (46.7792ms)
+✖ a search snapshot taken before PATCH cannot erase confirmed saved state or change another note (61.641ms)
+✖ closing after a failed save keeps a visible warning and permits retrying the same intent (30.5486ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 10
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 720.653
+
+✖ failing tests:
+
+test at tests\ui-state.test.js:231:1
+✖ a failed save leaves the persisted card unchanged and reports the failure (46.7792ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /未保存/. Input:
+  
+  '已读'
+  
+      at TestContext.<anonymous> (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:243:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '已读',
+    expected: /未保存/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests\ui-state.test.js:246:1
+✖ a search snapshot taken before PATCH cannot erase confirmed saved state or change another note (61.641ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '未读' !== '已读'
+  
+      at TestContext.<anonymous> (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:263:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '未读',
+    expected: '已读',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-state.test.js:269:1
+✖ closing after a failed save keeps a visible warning and permits retrying the same intent (30.5486ms)
+  AssertionError [ERR_ASSERTION]: failed close needs a persistent notice
+      at TestContext.<anonymous> (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:277:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

@@ -6,6 +6,9 @@
   let connectionSequence = 0;
   let databaseName = "";
   let searchHasRun = false;
+  let savedRevision = 0;
+  const savedNotes = new Map();
+  const failedSaves = new Map();
 
   function showConnection(connected, sequence, database) {
     if (sequence < connectionSequence) return;
@@ -16,6 +19,7 @@
     $("dbstate").textContent = connected
       ? "seekdb 已连接" + (databaseName ? " · " + databaseName : "")
       : "数据库不可用（后端会明确报错，不会返回假数据）";
+    if (connected && $("healthError")) $("results").innerHTML = '<div class="empty">等待检索…</div>';
   }
 
   function esc(s) {
@@ -40,7 +44,10 @@
       if (r.status >= 500) showConnection(false, sequence);
       throw new Error((data && data.error) || "HTTP " + r.status);
     }
-    showConnection(true, sequence, path === "/api/health" && data && data.database);
+    // Empty/tokenless searches return before the server queries seekdb.
+    // Their HTTP success therefore cannot establish database recovery.
+    const tokenlessSearch = path.startsWith("/api/search?") && data && Array.isArray(data.terms) && !data.terms.length;
+    if (!tokenlessSearch) showConnection(true, sequence, path === "/api/health" && data && data.database);
     return data;
   }
 
@@ -49,8 +56,8 @@
     try {
       await api("/api/health");
     } catch (e) {
-      if (!searchHasRun) {
-        $("results").innerHTML = '<div class="empty err">无法连接后端/数据库：' + esc(e.message) + "。请先运行 npm start 并确认 seekdb 在线。</div>";
+      if (!searchHasRun && connectionSequence === 1) {
+        $("results").innerHTML = '<div class="empty err" id="healthError">无法连接后端/数据库：' + esc(e.message) + "。请先运行 npm start 并确认 seekdb 在线。</div>";
       }
     }
   })();
@@ -66,6 +73,7 @@
 
   // ---- 检索 ----
   function runSearch(q) {
+    const startedAtRevision = savedRevision;
     searchHasRun = true;
     $("results").innerHTML = '<div class="empty">检索中…</div>';
     api("/api/search?q=" + encodeURIComponent(q))
@@ -81,7 +89,9 @@
           tip.textContent = "ℹ " + note + "（已扫描 " + scanned + " 条候选）";
           $("results").appendChild(tip);
         }
-        cards.forEach((c) => {
+        cards.forEach((card) => {
+          const saved = savedNotes.get(card.id);
+          const c = saved && saved.revision > startedAtRevision ? { ...card, ...saved.patch } : card;
           const el = document.createElement("div");
           el.className = "evidence";
           el.dataset.noteId = c.id;
@@ -115,7 +125,7 @@
     const sequence = ++listSequence;
     const box = $("list");
     box.innerHTML = '<div class="empty">加载中…</div>';
-    api("/api/notes" + (status ? "?status=" + status : ""))
+    api("/api/notes?limit=200" + (status ? "&status=" + status : ""))
       .then(({ notes }) => {
         if (sequence !== listSequence) return;
         if (!notes.length) { box.innerHTML = '<div class="empty">暂无笔记，去「导入笔记」添加，或运行 npm run seed 灌入公开样例。</div>'; return; }
@@ -143,6 +153,7 @@
   }
 
   function showSavedNote(id, patch) {
+    savedNotes.set(id, { revision: ++savedRevision, patch: { ...patch } });
     document.querySelectorAll("#results .evidence").forEach((el) => {
       if (el.dataset.noteId !== id) return;
       const pill = el.querySelector(".status-pill");
@@ -184,22 +195,54 @@
 
   // ---- 阅读器 + 进度持久化（经 persist-queue：按笔记 id 合并快照、串行保存、切换/关闭时 flush）----
   let reading = null;
+  function showSaveFailures() {
+    $("saveNotice").hidden = !failedSaves.size;
+    $("saveNoticeText").textContent = failedSaves.size
+      ? failedSaves.size + " 条笔记进度未保存：" + failedSaves.values().next().value.error + "。修改仅保留在当前页面，请恢复连接后重试。"
+      : "";
+  }
   const persistQ = createPersistQueue(
-    (id, patch) =>
-      api("/api/notes/" + id, {
+    async (id, patch) => {
+      try { return await api("/api/notes/" + id, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(patch),
-      }),
+      }); } catch (e) {
+        failedSaves.set(id, { patch: { ...patch }, error: e.message });
+        throw e;
+      }
+    },
     {
       debounceMs: 800,
       onSaved: (id, patch) => {
+        failedSaves.delete(id);
+        showSaveFailures();
         showSavedNote(id, patch);
-        if (reading && reading.id === id) flashSaveMsg("进度已存入数据库 ✓", false);
+        if (reading && reading.id === id) {
+          setStatusUi(reading.status, reading.progress);
+          flashSaveMsg("进度已存入数据库 ✓", false);
+        }
       },
-      onFailed: (id, e) => { if (reading && reading.id === id) flashSaveMsg("保存失败：" + e.message, true); },
+      onFailed: (id, e) => {
+        showSaveFailures();
+        if (reading && reading.id === id) {
+          setStatusUi(reading.status, reading.progress);
+          flashSaveMsg("保存失败：" + e.message, true);
+        }
+      },
     }
   );
+  $("retrySaves").onclick = async () => {
+    for (const id of Array.from(failedSaves.keys())) {
+      // Finish newer pending/in-flight intent first; never replay an old failed
+      // snapshot over a newer successful edit.
+      await persistQ.flush(id);
+      const failed = failedSaves.get(id);
+      if (!failed) continue;
+      persistQ.schedule(id, failed.patch);
+      await persistQ.flush(id);
+    }
+  };
   function flashSaveMsg(text, isErr) {
     const m = $("rSaveMsg");
     m.className = isErr ? "err" : "ok-msg";
@@ -225,7 +268,7 @@
   function setStatusUi(status, progress) {
     const pill = $("rStatusPill");
     pill.className = "status-pill " + status;
-    pill.textContent = STATUS_CN[status];
+    pill.textContent = STATUS_CN[status] + (reading && failedSaves.has(reading.id) ? "（未保存）" : "");
     $("rBar").style.width = progress + "%";
     $("rPct").textContent = progress + "%";
   }

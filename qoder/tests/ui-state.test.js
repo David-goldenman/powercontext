@@ -14,10 +14,10 @@ function response(status, data) {
   return { status, ok: status >= 200 && status < 300, json: async () => data };
 }
 
-function fixture(t, { delayedHealth = false } = {}) {
+function fixture(t, { delayedHealth = false, initialMode = "ok" } = {}) {
   const { document } = parseHTML(fs.readFileSync(path.join(publicDir, "app.html"), "utf8"));
   const timers = new Set();
-  const state = { mode: "ok", missing: false, failPatch: false, alerts: [], patches: [] };
+  const state = { mode: initialMode, missing: false, failPatch: false, alerts: [], patches: [] };
   const note = { id: "note-a", title: "Alpha note", url: "https://example.test/a",
     content: "alpha evidence for a frontend regression", status: "unread", progress: 0,
     created_at: "2026-01-01", updated_at: "2026-01-01" };
@@ -31,16 +31,28 @@ function fixture(t, { delayedHealth = false } = {}) {
     const url = new URL(request, "http://fixture.test");
     if (url.pathname === "/api/health" && delayedHealth) return oldHealth;
     if (state.mode === "network") throw new Error("connection refused");
+    // The real server returns tokenless searches before accessing seekdb.
+    if (url.pathname === "/api/search" && url.searchParams.get("q").trim().length < 2)
+      return response(200, { terms: [], cards: [], matchedCandidates: 0, scanned: 0, truncated: false });
     if (state.mode === "server") return response(500, { error: "database unavailable" });
     if (url.pathname === "/api/health") return response(200, health);
-    if (url.pathname === "/api/search") return response(200, {
+    if (url.pathname === "/api/search") {
+      const data = {
       query: url.searchParams.get("q"), terms: ["alpha"], matchedCandidates: 1,
-      scanned: 1, truncated: false, note: "", cards: [{ ...note, score: 1,
-        snippet: note.content, matchedTerms: ["alpha"] }],
-    });
+      scanned: 1, truncated: false, note: "", cards: [note, ...(state.extraNotes || [])].map(n => ({ ...n, score: 1,
+        snippet: n.content, matchedTerms: ["alpha"] })),
+      };
+      if (state.holdNextSearch) {
+        state.holdNextSearch = false;
+        return new Promise((resolve) => { state.releaseSearch = () => resolve(response(200, data)); });
+      }
+      return response(200, data);
+    }
     if (url.pathname === "/api/notes") {
-      const data = { notes: !url.searchParams.get("status") || url.searchParams.get("status") === note.status
-        ? [{ ...note, preview: note.content }] : [] };
+      const limit = url.searchParams.has("limit") ? Number(url.searchParams.get("limit")) : 1;
+      const data = { notes: [note, ...(state.extraNotes || [])]
+        .filter(n => !url.searchParams.get("status") || url.searchParams.get("status") === n.status)
+        .slice(0, limit).map(n => ({ ...n, preview: n.content })) };
       if (state.holdNextList) {
         state.holdNextList = false;
         return new Promise((resolve) => { state.releaseList = () => resolve(response(200, data)); });
@@ -48,6 +60,10 @@ function fixture(t, { delayedHealth = false } = {}) {
       return response(200, data);
     }
     if (url.pathname === "/api/notes/note-a" && options.method === "PATCH") {
+      if (state.holdPatch) {
+        state.holdPatch = false;
+        await new Promise((resolve) => { state.releasePatch = resolve; });
+      }
       if (state.failPatch) return response(500, { error: "save failed" });
       const patch = JSON.parse(options.body);
       Object.assign(note, patch);
@@ -72,8 +88,8 @@ function fixture(t, { delayedHealth = false } = {}) {
   }
   t.after(() => { for (const timer of timers) clearTimeout(timer); });
   const byId = (id) => document.getElementById(id);
-  async function search() {
-    byId("q").value = "alpha";
+  async function search(query = "alpha") {
+    byId("q").value = query;
     byId("go").onclick();
     await until(() => !byId("results").textContent.includes("检索中"));
   }
@@ -133,6 +149,20 @@ test("a successful retry restores the connection without retaining the down clas
   assert.ok(ui.byId("dbdot").classList.contains("up"));
   assert.ok(!ui.byId("dbdot").classList.contains("down"));
   assert.match(ui.byId("dbstate").textContent, /seekdb 已连接/);
+});
+
+test("a tokenless search cannot claim database recovery without a database query", async (t) => {
+  const ui = fixture(t);
+  await connected(ui);
+  ui.state.mode = "server";
+  await ui.search();
+  assert.ok(ui.byId("dbdot").classList.contains("down"));
+  for (const query of ["", "  ", "x"]) {
+    await ui.search(query);
+    assert.match(ui.byId("results").textContent, /没有命中/);
+    assert.ok(ui.byId("dbdot").classList.contains("down"), "tokenless response does not prove seekdb recovery");
+    assert.ok(!ui.byId("dbdot").classList.contains("up"));
+  }
 });
 
 test("a delayed old health success cannot overwrite a newer failed operation", async (t) => {
@@ -212,4 +242,77 @@ test("a failed save leaves the persisted card unchanged and reports the failure"
   assert.equal(ui.note.progress, 0);
   assert.equal(ui.document.querySelector("#results .status-pill").textContent, "未读");
   assert.equal(ui.document.querySelector("#results .bar i").style.width, "0%");
+  assert.match(ui.byId("rStatusPill").textContent, /未保存/);
+});
+
+test("a search snapshot taken before PATCH cannot erase confirmed saved state or change another note", async (t) => {
+  const ui = fixture(t);
+  ui.state.extraNotes = [{ ...ui.note, id: "note-b", title: "Other note" }];
+  await connected(ui);
+  await ui.search();
+  await ui.document.querySelector(".evidence").onclick();
+  ui.state.holdPatch = true;
+  ui.byId("rRead").onclick();
+  const closing = ui.byId("rClose").onclick();
+  await until(() => ui.state.releasePatch);
+  ui.state.holdNextSearch = true;
+  ui.byId("go").onclick();
+  await until(() => ui.state.releaseSearch);
+  ui.state.releasePatch();
+  await closing;
+  ui.state.releaseSearch();
+  await until(() => ui.document.querySelectorAll("#results .evidence").length === 2);
+  assert.equal(ui.document.querySelector('[data-note-id="note-a"] .status-pill').textContent, "已读");
+  assert.equal(ui.document.querySelector('[data-note-id="note-a"] .bar i').style.width, "100%");
+  assert.equal(ui.document.querySelector('[data-note-id="note-b"] .status-pill').textContent, "未读");
+  assert.equal(ui.document.querySelector('[data-note-id="note-b"] .bar i').style.width, "0%");
+});
+
+test("closing after a failed save keeps a visible warning and permits retrying the same intent", async (t) => {
+  const ui = fixture(t);
+  await connected(ui);
+  await ui.search();
+  await ui.document.querySelector(".evidence").onclick();
+  ui.state.failPatch = true;
+  ui.byId("rRead").onclick();
+  await ui.byId("rClose").onclick();
+  assert.ok(ui.byId("saveNotice"), "failed close needs a persistent notice");
+  assert.ok(!ui.byId("saveNotice").hidden);
+  assert.match(ui.byId("saveNoticeText").textContent, /未保存/);
+  assert.equal(ui.note.status, "unread");
+  ui.state.failPatch = false;
+  await ui.byId("retrySaves").onclick();
+  await until(() => ui.note.status === "read");
+  assert.equal(ui.note.progress, 100);
+  assert.ok(ui.byId("saveNotice").hidden);
+  assert.equal(ui.document.querySelector("#results .status-pill").textContent, "已读");
+});
+
+test("the library explicitly requests multiple notes rather than inheriting the server's one-row default", async (t) => {
+  const ui = fixture(t);
+  ui.state.extraNotes = [{ ...ui.note, id: "note-b", title: "Other note" }];
+  await connected(ui);
+  ui.document.querySelector('[data-tab="library"]').onclick();
+  await until(() => ui.document.querySelector("#list .note-item"));
+  assert.equal(ui.document.querySelectorAll("#list .note-item").length, 2);
+});
+
+test("an old health failure cannot contradict a newer successful library request", async (t) => {
+  const ui = fixture(t, { delayedHealth: true });
+  ui.document.querySelector('[data-tab="library"]').onclick();
+  await until(() => ui.document.querySelector("#list .note-item"));
+  ui.releaseHealth(500);
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.doesNotMatch(ui.byId("results").textContent, /无法连接/);
+  assert.ok(ui.byId("dbdot").classList.contains("up"));
+});
+
+test("a successful library recovery clears the earlier startup failure", async (t) => {
+  const ui = fixture(t, { initialMode: "server" });
+  await until(() => ui.byId("results").textContent.includes("无法连接"));
+  ui.state.mode = "ok";
+  ui.document.querySelector('[data-tab="library"]').onclick();
+  await until(() => ui.document.querySelector("#list .note-item"));
+  assert.doesNotMatch(ui.byId("results").textContent, /无法连接/);
+  assert.ok(ui.byId("dbdot").classList.contains("up"));
 });
