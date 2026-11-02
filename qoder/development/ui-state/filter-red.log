@@ -1,0 +1,34 @@
+✔ a backend 500 marks a previously connected database disconnected (34.6623ms)
+✔ a network error marks the connection disconnected (30.8278ms)
+✔ a missing note is a user-level 404, not a database outage (31.2383ms)
+✔ a successful retry restores the connection without retaining the down class (45.7214ms)
+✔ a delayed old health success cannot overwrite a newer failed operation (15.7331ms)
+✔ saved read status and progress update the existing search card after close (22.9474ms)
+✔ an old failed health request cannot erase newer successful search results (23.1296ms)
+✔ marking a note read removes it from the active unread library filter (62.0426ms)
+✖ an older library refresh cannot overwrite a newer status filter (47.3169ms)
+✔ a failed save leaves the persisted card unchanged and reports the failure (45.2445ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 9
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 657.7285
+
+✖ failing tests:
+
+test at tests\ui-state.test.js:185:1
+✖ an older library refresh cannot overwrite a newer status filter (47.3169ms)
+  AssertionError [ERR_ASSERTION]: the newer unread filter must stay empty
+      at TestContext.<anonymous> (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:199:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

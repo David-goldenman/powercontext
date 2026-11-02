@@ -1,0 +1,56 @@
+
+> evidence-desk@1.0.0 test
+> node --test tests/evidence-core.test.js tests/persist-queue.test.js tests/http-robustness.test.js tests/db-failure.test.js tests/api-integration.test.js tests/ui-state.test.js
+
+✔ 启动真实服务进程并连接 seekdb (189.6758ms)
+✔ health 报告真实 seekdb 版本与专有库名 (33.2478ms)
+✔ 导入笔记写入数据库并可列出 (36.9331ms)
+✔ 检索返回带真实来源 URL 与匹配片段的证据卡 (7.1163ms)
+✔ 输入校验：非法 URL / 空标题 / 过短正文返回 400 (27.6296ms)
+✔ 进度校验：非法状态与越界百分比返回 400，未知 id 返回 404 (70.7313ms)
+✔ SQL 注入式输入被当作字面量，表结构不受影响 (45.4317ms)
+✔ LIKE 通配符与百分号输入不会泄漏全库内容 (16.7093ms)
+✔ 候选超过单页时游标分页全量扫描：位于后页的最佳条目不得丢失（回归：无序 LIMIT 截断） (638.4346ms)
+✔ 列表 limit 参数钳制为整数：1.5/Infinity/-3/abc/0 均返回 200 而非 SQL 语法错误 (93.3865ms)
+✔ 阅读进度更新后，杀掉服务进程重新拉起仍然保留（真实重启持久化） (231.2791ms)
+✔ 状态过滤：按 status 查询只返回对应状态笔记 (19.134ms)
+✔ 静态页面可访问：展示页 / 应用页 / 样例 JSON (42.1031ms)
+✔ 路径穿越请求不会泄露 public 之外的文件 (14.9526ms)
+✔ 清理测试数据并关闭服务 (65.4641ms)
+✔ 服务启动时数据库不可用：进程以非零退出码失败，不提供服务 (137.0377ms)
+✔ 运行中的服务遇到死库：API 返回 500 与真实错误信息，绝不返回 ok:true 或假数据 (167.0075ms)
+✔ tokenizeTerms：过滤停用词与短词、去重、限量 (2.4613ms)
+✔ makeSnippet：命中词周围截取并加省略号 (0.2479ms)
+✔ makeSnippet：未命中时返回开头文本且 matchedTerm 为 null (0.0904ms)
+✔ searchNotes：标题命中权重高于正文，按得分降序 (0.2398ms)
+✔ searchNotes：证据卡携带真实来源 URL 与匹配片段、匹配词 (0.1724ms)
+✔ searchNotes：空查询或全停用词查询返回空数组 (0.8257ms)
+✔ searchNotes：大小写不敏感 (0.195ms)
+✔ Host: [ 的原始请求得到合法 HTTP 响应而非进程崩溃 (12.9414ms)
+✔ 恶意请求行（含 CRLF 注入尝试的 Host 头变体）不产生第二个响应头错乱 (2.9786ms)
+✔ 非法 Host 请求之后，服务仍然存活并可继续正常响应静态页 (2.6815ms)
+✔ 绝对形式请求行也可正常路由（固定 base 解析） (2.2535ms)
+✔ 防抖窗口内两次 schedule 合并为一次保存，且保存最新快照 (65.2925ms)
+✔ 关闭时 flush 后，旧定时器不得触发第二次保存（回归：立即关闭丢进度） (91.7306ms)
+✔ A→B 快速切换：各笔记补丁按 id 归属，不得互相冒领（回归：A 的 timer 当成 B） (0.5229ms)
+✔ 同一笔记并发 flush 串行执行：saveFn 不重入，顺序与补丁一致 (59.9523ms)
+✔ 保存失败回调携带正确 id 与错误，队列后续仍可保存 (0.899ms)
+✔ flush 未知/无待保存 id：不产生保存，返回可等待的 Promise (0.1859ms)
+✔ a backend 500 marks a previously connected database disconnected (34.8868ms)
+✔ a network error marks the connection disconnected (29.1316ms)
+✔ a missing note is a user-level 404, not a database outage (30.6382ms)
+✔ a successful retry restores the connection without retaining the down class (45.2151ms)
+✔ a delayed old health success cannot overwrite a newer failed operation (15.0416ms)
+✔ saved read status and progress update the existing search card after close (32.0631ms)
+✔ an old failed health request cannot erase newer successful search results (13.4744ms)
+✔ marking a note read removes it from the active unread library filter (61.2578ms)
+✔ an older library refresh cannot overwrite a newer status filter (36.142ms)
+✔ a failed save leaves the persisted card unchanged and reports the failure (39.9609ms)
+ℹ tests 44
+ℹ suites 0
+ℹ pass 44
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1725.1663

@@ -1,0 +1,136 @@
+✖ a backend 500 marks a previously connected database disconnected (35.0487ms)
+✖ a network error marks the connection disconnected (27.9257ms)
+✔ a missing note is a user-level 404, not a database outage (30.8923ms)
+✖ a successful retry restores the connection without retaining the down class (30.9044ms)
+✖ a delayed old health success cannot overwrite a newer failed operation (8.1363ms)
+✖ saved read status and progress update the existing search card after close (24.0952ms)
+✖ an old failed health request cannot erase newer successful search results (14.131ms)
+✖ marking a note read removes it from the active unread library filter (1552.3554ms)
+✔ a failed save leaves the persisted card unchanged and reports the failure (47.243ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 2
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2072.7065
+
+✖ failing tests:
+
+test at tests\ui-state.test.js:90:1
+✖ a backend 500 marks a previously connected database disconnected (35.0487ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(ui.byId("dbdot").classList.contains("down"))
+  
+      at TestContext.<anonymous> (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:96:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\ui-state.test.js:101:1
+✖ a network error marks the connection disconnected (27.9257ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(ui.byId("dbdot").classList.contains("down"))
+  
+      at TestContext.<anonymous> (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:106:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\ui-state.test.js:120:1
+✖ a successful retry restores the connection without retaining the down class (30.9044ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(ui.byId("dbdot").classList.contains("down"))
+  
+      at TestContext.<anonymous> (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:125:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\ui-state.test.js:133:1
+✖ a delayed old health success cannot overwrite a newer failed operation (8.1363ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(ui.byId("dbdot").classList.contains("down"))
+  
+      at TestContext.<anonymous> (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:139:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\ui-state.test.js:143:1
+✖ saved read status and progress update the existing search card after close (24.0952ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '未读' !== '已读'
+  
+      at TestContext.<anonymous> (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:152:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '未读',
+    expected: '已读',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\ui-state.test.js:156:1
+✖ an old failed health request cannot erase newer successful search results (14.131ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(ui.document.querySelector("#results .evidence"))
+  
+      at TestContext.<anonymous> (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:162:10)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\ui-state.test.js:166:1
+✖ marking a note read removes it from the active unread library filter (1552.3554ms)
+  AssertionError [ERR_ASSERTION]: UI did not reach the expected observable state
+      at until (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:81:12)
+      at async TestContext.<anonymous> (D:\ob-race\powercontext-qoder-ui-state\qoder\tests\ui-state.test.js:176:3)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
