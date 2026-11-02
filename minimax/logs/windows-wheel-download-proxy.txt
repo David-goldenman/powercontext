@@ -1,0 +1,46 @@
+Collecting PyMySQL==1.2.0 (from -r requirements.txt (line 2))
+  Using cached pymysql-1.2.0-py3-none-any.whl.metadata (4.3 kB)
+Collecting pydantic==2.13.5 (from -r requirements.txt (line 3))
+  Using cached pydantic-2.13.5-py3-none-any.whl.metadata (110 kB)
+Collecting SQLAlchemy==2.0.54 (from -r requirements.txt (line 4))
+  Using cached sqlalchemy-2.0.54-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (9.7 kB)
+Collecting aiosqlite==0.22.1 (from -r requirements.txt (line 5))
+  Using cached aiosqlite-0.22.1-py3-none-any.whl.metadata (4.3 kB)
+Collecting rfc8785==0.1.4 (from -r requirements.txt (line 6))
+  Using cached rfc8785-0.1.4-py3-none-any.whl.metadata (3.4 kB)
+Collecting typing-extensions==4.16.0 (from -r requirements.txt (line 7))
+  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting sqlite-vec==0.1.9 (from -r requirements.txt (line 8))
+  Using cached sqlite_vec-0.1.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux1_x86_64.whl.metadata (198 bytes)
+Collecting annotated-types>=0.6.0 (from pydantic==2.13.5->-r requirements.txt (line 3))
+  Using cached annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.46.5 (from pydantic==2.13.5->-r requirements.txt (line 3))
+  Using cached pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+Collecting typing-inspection>=0.4.2 (from pydantic==2.13.5->-r requirements.txt (line 3))
+  Using cached typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+Collecting greenlet>=1 (from SQLAlchemy==2.0.54->-r requirements.txt (line 4))
+  Using cached greenlet-3.2.5-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.1 kB)
+Using cached pymysql-1.2.0-py3-none-any.whl (45 kB)
+Using cached pydantic-2.13.5-py3-none-any.whl (472 kB)
+Using cached sqlalchemy-2.0.54-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.5 MB)
+Using cached aiosqlite-0.22.1-py3-none-any.whl (17 kB)
+Using cached rfc8785-0.1.4-py3-none-any.whl (9.2 kB)
+Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Using cached sqlite_vec-0.1.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux1_x86_64.whl (163 kB)
+Using cached pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+Using cached annotated_types-0.8.0-py3-none-any.whl (13 kB)
+Downloading greenlet-3.2.5-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (655 kB)
+   ---------------------------------------- 655.4/655.4 kB 989.0 kB/s  0:00:00
+Downloading typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+Saved .\_work\wheels\pymysql-1.2.0-py3-none-any.whl
+Saved .\_work\wheels\pydantic-2.13.5-py3-none-any.whl
+Saved .\_work\wheels\sqlalchemy-2.0.54-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
+Saved .\_work\wheels\aiosqlite-0.22.1-py3-none-any.whl
+Saved .\_work\wheels\rfc8785-0.1.4-py3-none-any.whl
+Saved .\_work\wheels\typing_extensions-4.16.0-py3-none-any.whl
+Saved .\_work\wheels\sqlite_vec-0.1.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux1_x86_64.whl
+Saved .\_work\wheels\pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+Saved .\_work\wheels\annotated_types-0.8.0-py3-none-any.whl
+Saved .\_work\wheels\greenlet-3.2.5-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
+Saved .\_work\wheels\typing_inspection-0.4.4-py3-none-any.whl
+Successfully downloaded PyMySQL pydantic SQLAlchemy aiosqlite rfc8785 typing-extensions sqlite-vec pydantic-core annotated-types greenlet typing-inspection

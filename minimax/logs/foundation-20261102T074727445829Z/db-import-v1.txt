@@ -1,0 +1,6 @@
+{
+  "task": "priority-filter-f5ce0f7937",
+  "documents": 4,
+  "database": "minimax_sdd",
+  "server_version": "5.7.25-OceanBase seekdb-v1.4.0.0"
+}

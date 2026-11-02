@@ -1,0 +1,114 @@
+test_combines_status_and_priority (test_target.TargetTests.test_combines_status_and_priority) ... FAIL
+test_inclusive_threshold (test_target.TargetTests.test_inclusive_threshold) ... FAIL
+test_invalid_values_rejected_even_on_empty_input (test_target.TargetTests.test_invalid_values_rejected_even_on_empty_input) ... FAIL
+test_valid_boundaries (test_target.TargetTests.test_valid_boundaries) ... FAIL
+test_valid_filter_on_empty_input (test_target.TargetTests.test_valid_filter_on_empty_input) ... FAIL
+
+======================================================================
+FAIL: test_combines_status_and_priority (test_target.TargetTests.test_combines_status_and_priority)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_target.py", line 9, in call_feature
+    return list_tasks(rows, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/d/ob-race/powercontext/minimax/sample/tasks.py", line 19, in list_tasks
+    raise NotImplementedError('min_priority is a future MiniMax implementation task')
+NotImplementedError: min_priority is a future MiniMax implementation task
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_target.py", line 18, in test_combines_status_and_priority
+    rows = self.call_feature(INITIAL_TASKS, status='open', min_priority=4)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_target.py", line 11, in call_feature
+    self.fail('New min_priority feature is not implemented in the business baseline')
+AssertionError: New min_priority feature is not implemented in the business baseline
+
+======================================================================
+FAIL: test_inclusive_threshold (test_target.TargetTests.test_inclusive_threshold)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_target.py", line 9, in call_feature
+    return list_tasks(rows, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/d/ob-race/powercontext/minimax/sample/tasks.py", line 19, in list_tasks
+    raise NotImplementedError('min_priority is a future MiniMax implementation task')
+NotImplementedError: min_priority is a future MiniMax implementation task
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_target.py", line 14, in test_inclusive_threshold
+    rows = self.call_feature(INITIAL_TASKS, min_priority=3)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_target.py", line 11, in call_feature
+    self.fail('New min_priority feature is not implemented in the business baseline')
+AssertionError: New min_priority feature is not implemented in the business baseline
+
+======================================================================
+FAIL: test_invalid_values_rejected_even_on_empty_input (test_target.TargetTests.test_invalid_values_rejected_even_on_empty_input)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_target.py", line 9, in call_feature
+    return list_tasks(rows, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/d/ob-race/powercontext/minimax/sample/tasks.py", line 19, in list_tasks
+    raise NotImplementedError('min_priority is a future MiniMax implementation task')
+NotImplementedError: min_priority is a future MiniMax implementation task
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_target.py", line 31, in test_invalid_values_rejected_even_on_empty_input
+    self.call_feature([], min_priority=value)
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_target.py", line 11, in call_feature
+    self.fail('New min_priority feature is not implemented in the business baseline')
+AssertionError: New min_priority feature is not implemented in the business baseline
+
+======================================================================
+FAIL: test_valid_boundaries (test_target.TargetTests.test_valid_boundaries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_target.py", line 9, in call_feature
+    return list_tasks(rows, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/d/ob-race/powercontext/minimax/sample/tasks.py", line 19, in list_tasks
+    raise NotImplementedError('min_priority is a future MiniMax implementation task')
+NotImplementedError: min_priority is a future MiniMax implementation task
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_target.py", line 22, in test_valid_boundaries
+    self.assertEqual([t['id'] for t in self.call_feature(INITIAL_TASKS, min_priority=1)], [2, 3, 1, 4])
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_target.py", line 11, in call_feature
+    self.fail('New min_priority feature is not implemented in the business baseline')
+AssertionError: New min_priority feature is not implemented in the business baseline
+
+======================================================================
+FAIL: test_valid_filter_on_empty_input (test_target.TargetTests.test_valid_filter_on_empty_input)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_target.py", line 9, in call_feature
+    return list_tasks(rows, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/d/ob-race/powercontext/minimax/sample/tasks.py", line 19, in list_tasks
+    raise NotImplementedError('min_priority is a future MiniMax implementation task')
+NotImplementedError: min_priority is a future MiniMax implementation task
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_target.py", line 26, in test_valid_filter_on_empty_input
+    self.assertEqual(self.call_feature([], min_priority=2), [])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_target.py", line 11, in call_feature
+    self.fail('New min_priority feature is not implemented in the business baseline')
+AssertionError: New min_priority feature is not implemented in the business baseline
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.020s
+
+FAILED (failures=5)

@@ -1,0 +1,19 @@
+# Minimal runtime subset for the real PowerContext Scope/SQLite API (source via PYTHONPATH).
+PyMySQL==1.2.0
+pydantic==2.13.5
+SQLAlchemy==2.0.54
+aiosqlite==0.22.1
+rfc8785==0.1.4
+typing-extensions==4.16.0
+sqlite-vec==0.1.9
+# Transitive runtime dependencies, pinned from the clean official-wheel installation.
+annotated-types==0.8.0
+pydantic-core==2.46.5
+typing-inspection==0.4.4
+greenlet==3.2.5
+PyYAML==6.0.3
+packaging==26.3
+numpy==2.5.3
+opentelemetry-api==1.44.0
+opentelemetry-sdk==1.44.0
+opentelemetry-semantic-conventions==0.65b0

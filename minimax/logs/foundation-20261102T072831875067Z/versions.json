@@ -1,0 +1,17 @@
+{
+  "python": "3.12.16 (main, Oct 26 2026, 14:08:45) [Clang 23.1.3 ]",
+  "python_executable": "/data/pc/competition/.venv/bin/python",
+  "repository_base_commit": "c10ae9732c88d4756233d97a740b3fba24c525ff",
+  "code_version": "task-list-baseline-v1 (uncommitted source snapshot)",
+  "powercontext_source": "/mnt/d/ob-race/powercontext-evidence/src/powercontext/builtin/scope/application.py",
+  "powercontext_commit": "",
+  "packages": {
+    "PyMySQL": "1.2.0",
+    "pydantic": "2.13.5",
+    "SQLAlchemy": "2.0.54",
+    "aiosqlite": "0.22.1",
+    "rfc8785": "0.1.4",
+    "typing-extensions": "4.16.0",
+    "sqlite-vec": "0.1.9"
+  }
+}

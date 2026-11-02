@@ -1,0 +1,15 @@
+{
+  "scope_id": "scp_5pppmry9rw1vs0b69rsdp0p5yx",
+  "scope_version": 1,
+  "completed": [
+    "Baseline regression: 5 passed; foundation integration: 7 passed; adapter: 8 passed"
+  ],
+  "todo": [
+    "Use MiniMax to implement min_priority after user API and quota are available"
+  ],
+  "verification": [
+    "target-red: exit 1, five failures caused by explicit NotImplementedError"
+  ],
+  "saved_by_process": 1867542,
+  "process_id": 1867542
+}

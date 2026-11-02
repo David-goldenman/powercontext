@@ -1,0 +1,13 @@
+test_accepts_public_python_proposal (test_adapter.AdapterTests.test_accepts_public_python_proposal) ... ok
+test_discards_reasoning_blocks (test_adapter.AdapterTests.test_discards_reasoning_blocks) ... ok
+test_frozen_test_source_change_is_detected (test_adapter.AdapterTests.test_frozen_test_source_change_is_detected) ... ok
+test_rejects_other_paths_and_invalid_python (test_adapter.AdapterTests.test_rejects_other_paths_and_invalid_python) ... ok
+test_rejects_unclosed_reasoning (test_adapter.AdapterTests.test_rejects_unclosed_reasoning) ... ok
+test_sanitized_receipt_survives_rejection (test_adapter.AdapterTests.test_sanitized_receipt_survives_rejection) ... ok
+test_test_environment_contains_no_model_credentials (test_adapter.AdapterTests.test_test_environment_contains_no_model_credentials) ... ok
+test_zero_tests_and_skips_cannot_be_verified (test_adapter.AdapterTests.test_zero_tests_and_skips_cannot_be_verified) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.066s
+
+OK

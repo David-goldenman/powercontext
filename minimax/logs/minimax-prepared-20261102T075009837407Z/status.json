@@ -1,0 +1,9 @@
+{
+  "api_called": false,
+  "request_attempted": false,
+  "api_response_received": false,
+  "task": "priority-filter-f5ce0f7937",
+  "timestamp_utc": "20261102T075009837407Z",
+  "status": "PREPARED_ONLY",
+  "phase": "prepare"
+}

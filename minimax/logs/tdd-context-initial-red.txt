@@ -1,0 +1,48 @@
+test_database_allowlist_rejects_other_schema (test_context.ContextTests.test_database_allowlist_rejects_other_schema) ... FAIL
+test_database_sources_spec_reimport_and_removed_content (test_context.ContextTests.test_database_sources_spec_reimport_and_removed_content) ... FAIL
+test_missing_source_is_rejected (test_context.ContextTests.test_missing_source_is_rejected) ... FAIL
+test_powercontext_write_then_new_process_uses_state (test_context.ContextTests.test_powercontext_write_then_new_process_uses_state) ... FAIL
+
+======================================================================
+FAIL: test_database_allowlist_rejects_other_schema (test_context.ContextTests.test_database_allowlist_rejects_other_schema)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_context.py", line 72, in test_database_allowlist_rejects_other_schema
+    self.assertIn('minimax_sdd', failed.stderr)
+AssertionError: 'minimax_sdd' not found in "/data/pc/competition/.venv/bin/python: can't open file '/mnt/d/ob-race/powercontext/minimax/context_cli.py': [Errno 2] No such file or directory\n"
+
+======================================================================
+FAIL: test_database_sources_spec_reimport_and_removed_content (test_context.ContextTests.test_database_sources_spec_reimport_and_removed_content)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_context.py", line 29, in test_database_sources_spec_reimport_and_removed_content
+    first = self.cli('import', '--task', self.task, '--manifest', 'sample/manifest-v1.json')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_context.py", line 23, in cli
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 2 != 0 : /data/pc/competition/.venv/bin/python: can't open file '/mnt/d/ob-race/powercontext/minimax/context_cli.py': [Errno 2] No such file or directory
+
+
+======================================================================
+FAIL: test_missing_source_is_rejected (test_context.ContextTests.test_missing_source_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_context.py", line 67, in test_missing_source_is_rejected
+    self.assertIn('absent.py', failed.stderr)
+AssertionError: 'absent.py' not found in "/data/pc/competition/.venv/bin/python: can't open file '/mnt/d/ob-race/powercontext/minimax/context_cli.py': [Errno 2] No such file or directory\n"
+
+======================================================================
+FAIL: test_powercontext_write_then_new_process_uses_state (test_context.ContextTests.test_powercontext_write_then_new_process_uses_state)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_context.py", line 49, in test_powercontext_write_then_new_process_uses_state
+    self.cli('import', '--task', task, '--manifest', 'sample/manifest-v2.json')
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_context.py", line 23, in cli
+    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+AssertionError: 2 != 0 : /data/pc/competition/.venv/bin/python: can't open file '/mnt/d/ob-race/powercontext/minimax/context_cli.py': [Errno 2] No such file or directory
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.064s
+
+FAILED (failures=4)

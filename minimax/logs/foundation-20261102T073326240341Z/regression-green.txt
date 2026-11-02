@@ -1,0 +1,10 @@
+test_default_priority_then_id_order (test_regression.RegressionTests.test_default_priority_then_id_order) ... ok
+test_empty_and_no_status_match (test_regression.RegressionTests.test_empty_and_no_status_match) ... ok
+test_input_is_not_mutated_and_results_are_copies (test_regression.RegressionTests.test_input_is_not_mutated_and_results_are_copies) ... ok
+test_none_filter_preserves_baseline (test_regression.RegressionTests.test_none_filter_preserves_baseline) ... ok
+test_status_filter_preserves_order (test_regression.RegressionTests.test_status_filter_preserves_order) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.000s
+
+OK

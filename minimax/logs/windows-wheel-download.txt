@@ -1,0 +1,142 @@
+Collecting PyMySQL==1.2.0 (from -r requirements.txt (line 2))
+  Downloading pymysql-1.2.0-py3-none-any.whl.metadata (4.3 kB)
+Collecting pydantic==2.13.5 (from -r requirements.txt (line 3))
+  Downloading pydantic-2.13.5-py3-none-any.whl.metadata (110 kB)
+Collecting SQLAlchemy==2.0.54 (from -r requirements.txt (line 4))
+  Downloading sqlalchemy-2.0.54-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (9.7 kB)
+Collecting aiosqlite==0.22.1 (from -r requirements.txt (line 5))
+  Downloading aiosqlite-0.22.1-py3-none-any.whl.metadata (4.3 kB)
+Collecting rfc8785==0.1.4 (from -r requirements.txt (line 6))
+  Downloading rfc8785-0.1.4-py3-none-any.whl.metadata (3.4 kB)
+Collecting typing-extensions==4.16.0 (from -r requirements.txt (line 7))
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting sqlite-vec==0.1.9 (from -r requirements.txt (line 8))
+  Downloading sqlite_vec-0.1.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux1_x86_64.whl.metadata (198 bytes)
+Collecting annotated-types>=0.6.0 (from pydantic==2.13.5->-r requirements.txt (line 3))
+  Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.46.5 (from pydantic==2.13.5->-r requirements.txt (line 3))
+  Downloading pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+Collecting typing-inspection>=0.4.2 (from pydantic==2.13.5->-r requirements.txt (line 3))
+  Downloading typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+Collecting greenlet>=1 (from SQLAlchemy==2.0.54->-r requirements.txt (line 4))
+  Downloading greenlet-3.2.5-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.1 kB)
+Downloading pymysql-1.2.0-py3-none-any.whl (45 kB)
+Downloading pydantic-2.13.5-py3-none-any.whl (472 kB)
+Downloading sqlalchemy-2.0.54-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.5 MB)
+   ---------------------------------------- 3.5/3.5 MB 340.5 kB/s  0:00:11
+Downloading aiosqlite-0.22.1-py3-none-any.whl (17 kB)
+Downloading rfc8785-0.1.4-py3-none-any.whl (9.2 kB)
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Downloading sqlite_vec-0.1.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux1_x86_64.whl (163 kB)
+Downloading pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+   ---------------------------------------- 2.1/2.1 MB 643.5 kB/s  0:00:03
+Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+ERROR: Exception:
+Traceback (most recent call last):
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_vendor\urllib3\connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_vendor\urllib3\connection.py", line 571, in getresponse
+    httplib_response = super().getresponse()
+  File "C:\msys64\ucrt64\lib\python3.14\http\client.py", line 1450, in getresponse
+    response.begin()
+    ~~~~~~~~~~~~~~^^
+  File "C:\msys64\ucrt64\lib\python3.14\http\client.py", line 336, in begin
+    version, status, reason = self._read_status()
+                              ~~~~~~~~~~~~~~~~~^^
+  File "C:\msys64\ucrt64\lib\python3.14\http\client.py", line 297, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\msys64\ucrt64\lib\python3.14\socket.py", line 725, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\msys64\ucrt64\lib\python3.14\ssl.py", line 1304, in recv_into
+    return self.read(nbytes, buffer)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\msys64\ucrt64\lib\python3.14\ssl.py", line 1138, in read
+    return self._sslobj.read(len, buffer)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TimeoutError: The read operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_vendor\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_vendor\urllib3\connectionpool.py", line 536, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_vendor\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+        self, url, f"Read timed out. (read timeout={timeout_value})"
+    ) from err
+pip._vendor.urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='files.pythonhosted.org', port=443): Read timed out. (read timeout=15.0)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_vendor\requests\adapters.py", line 645, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_vendor\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_vendor\urllib3\util\retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pip._vendor.urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='files.pythonhosted.org', port=443): Max retries exceeded with url: /packages/2f/1b/75a5aeff487a26ba427a3837da6372f1fe6f2a9c6b2898e28ac99d491c11/greenlet-3.2.5-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (Caused by ReadTimeoutError("HTTPSConnectionPool(host='files.pythonhosted.org', port=443): Read timed out. (read timeout=15.0)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_internal\cli\base_command.py", line 109, in _run_wrapper
+    status = _inner_run()
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_internal\cli\base_command.py", line 102, in _inner_run
+    return self.run(options, args)
+           ~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_internal\cli\req_command.py", line 101, in wrapper
+    return func(self, options, args)
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_internal\commands\download.py", line 134, in run
+    preparer.prepare_linked_requirements_more(requirement_set.requirements.values())
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_internal\operations\prepare.py", line 569, in prepare_linked_requirements_more
+    self._complete_partial_requirements(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        partially_downloaded_reqs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        parallel_builds=parallel_builds,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_internal\operations\prepare.py", line 478, in _complete_partial_requirements
+    for link, (filepath, _) in batch_download:
+                               ^^^^^^^^^^^^^^
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_internal\network\download.py", line 182, in batch
+    filepath, content_type = self(link, location)
+                             ~~~~^^^^^^^^^^^^^^^^
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_internal\network\download.py", line 187, in __call__
+    resp = self._http_get(link)
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_internal\network\download.py", line 332, in _http_get
+    resp = self._session.get(target_url, headers=headers, stream=True)
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_vendor\requests\sessions.py", line 605, in get
+    return self.request("GET", url, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_internal\network\session.py", line 532, in request
+    return super().request(method, url, *args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_vendor\requests\sessions.py", line 592, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_vendor\requests\sessions.py", line 706, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_vendor\cachecontrol\adapter.py", line 76, in send
+    resp = super().send(request, stream, timeout, verify, cert, proxies)
+  File "C:\msys64\ucrt64\lib\python3.14\site-packages\pip\_vendor\requests\adapters.py", line 678, in send
+    raise ConnectionError(e, request=request)
+pip._vendor.requests.exceptions.ConnectionError: HTTPSConnectionPool(host='files.pythonhosted.org', port=443): Max retries exceeded with url: /packages/2f/1b/75a5aeff487a26ba427a3837da6372f1fe6f2a9c6b2898e28ac99d491c11/greenlet-3.2.5-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (Caused by ReadTimeoutError("HTTPSConnectionPool(host='files.pythonhosted.org', port=443): Read timed out. (read timeout=15.0)"))

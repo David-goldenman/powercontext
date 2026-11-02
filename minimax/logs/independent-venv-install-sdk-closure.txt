@@ -1,0 +1,21 @@
+Looking in links: _work/wheels
+Requirement already satisfied: PyMySQL==1.2.0 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 2)) (1.2.0)
+Requirement already satisfied: pydantic==2.13.5 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 3)) (2.13.5)
+Requirement already satisfied: SQLAlchemy==2.0.54 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 4)) (2.0.54)
+Requirement already satisfied: aiosqlite==0.22.1 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 5)) (0.22.1)
+Requirement already satisfied: rfc8785==0.1.4 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 6)) (0.1.4)
+Requirement already satisfied: typing-extensions==4.16.0 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 7)) (4.16.0)
+Requirement already satisfied: sqlite-vec==0.1.9 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 8)) (0.1.9)
+Requirement already satisfied: annotated-types==0.8.0 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 10)) (0.8.0)
+Requirement already satisfied: pydantic-core==2.46.5 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 11)) (2.46.5)
+Requirement already satisfied: typing-inspection==0.4.4 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 12)) (0.4.4)
+Requirement already satisfied: greenlet==3.2.5 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 13)) (3.2.5)
+Requirement already satisfied: PyYAML==6.0.3 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 14)) (6.0.3)
+Requirement already satisfied: packaging==26.3 in ./.venv/lib/python3.12/site-packages (from -r requirements.txt (line 15)) (26.3)
+Processing ./_work/wheels/numpy-2.5.3-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (from -r requirements.txt (line 16))
+Processing ./_work/wheels/opentelemetry_api-1.44.0-py3-none-any.whl (from -r requirements.txt (line 17))
+Processing ./_work/wheels/opentelemetry_sdk-1.44.0-py3-none-any.whl (from -r requirements.txt (line 18))
+Processing ./_work/wheels/opentelemetry_semantic_conventions-0.65b0-py3-none-any.whl (from -r requirements.txt (line 19))
+Installing collected packages: opentelemetry-api, numpy, opentelemetry-semantic-conventions, opentelemetry-sdk
+
+Successfully installed numpy-2.5.3 opentelemetry-api-1.44.0 opentelemetry-sdk-1.44.0 opentelemetry-semantic-conventions-0.65b0

@@ -1,0 +1,9 @@
+test_accepts_public_python_proposal (test_adapter.AdapterTests.test_accepts_public_python_proposal) ... ok
+test_discards_reasoning_blocks (test_adapter.AdapterTests.test_discards_reasoning_blocks) ... ok
+test_rejects_other_paths_and_invalid_python (test_adapter.AdapterTests.test_rejects_other_paths_and_invalid_python) ... ok
+test_rejects_unclosed_reasoning (test_adapter.AdapterTests.test_rejects_unclosed_reasoning) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.002s
+
+OK

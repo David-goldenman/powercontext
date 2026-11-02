@@ -1,0 +1,21 @@
+test_adapter (unittest.loader._FailedTest.test_adapter) ... ERROR
+
+======================================================================
+ERROR: test_adapter (unittest.loader._FailedTest.test_adapter)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_adapter
+Traceback (most recent call last):
+  File "/home/qjq/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/qjq/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "/mnt/d/ob-race/powercontext/minimax/tests/test_adapter.py", line 6, in <module>
+    from minimax_change import (ROOT, assert_frozen_tests, decode_proposal, freeze_tests,
+ImportError: cannot import name 'assert_frozen_tests' from 'minimax_change' (/mnt/d/ob-race/powercontext/minimax/minimax_change.py)
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (errors=1)

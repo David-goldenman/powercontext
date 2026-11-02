@@ -1,0 +1,223 @@
+[
+  {
+    "name": "regression-green",
+    "command": [
+      "/data/pc/competition/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_regression.py",
+      "-v"
+    ],
+    "cwd": "/mnt/d/ob-race/powercontext/minimax",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "code_version": "task-list-baseline-v1 (uncommitted source snapshot)",
+    "timestamp_utc": "2026-11-02T07:28:34.590276+00:00"
+  },
+  {
+    "name": "target-red",
+    "command": [
+      "/data/pc/competition/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_target.py",
+      "-v"
+    ],
+    "cwd": "/mnt/d/ob-race/powercontext/minimax",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "code_version": "task-list-baseline-v1 (uncommitted source snapshot)",
+    "timestamp_utc": "2026-11-02T07:28:34.744528+00:00"
+  },
+  {
+    "name": "adapter-offline-green",
+    "command": [
+      "/data/pc/competition/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_adapter.py",
+      "-v"
+    ],
+    "cwd": "/mnt/d/ob-race/powercontext/minimax",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "code_version": "task-list-baseline-v1 (uncommitted source snapshot)",
+    "timestamp_utc": "2026-11-02T07:28:35.073047+00:00"
+  },
+  {
+    "name": "context-integration-green",
+    "command": [
+      "/data/pc/competition/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_context.py",
+      "-v"
+    ],
+    "cwd": "/mnt/d/ob-race/powercontext/minimax",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "code_version": "task-list-baseline-v1 (uncommitted source snapshot)",
+    "timestamp_utc": "2026-11-02T07:29:02.586920+00:00"
+  },
+  {
+    "name": "full-suite-expected-red",
+    "command": [
+      "/data/pc/competition/.venv/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "cwd": "/mnt/d/ob-race/powercontext/minimax",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "code_version": "task-list-baseline-v1 (uncommitted source snapshot)",
+    "timestamp_utc": "2026-11-02T07:29:30.754597+00:00"
+  },
+  {
+    "name": "db-import-v1",
+    "command": [
+      "/data/pc/competition/.venv/bin/python",
+      "context_cli.py",
+      "--store",
+      "runtime/priority-filter-999ad7111d.sqlite3",
+      "import",
+      "--task",
+      "priority-filter-999ad7111d",
+      "--manifest",
+      "sample/manifest-v1.json"
+    ],
+    "cwd": "/mnt/d/ob-race/powercontext/minimax",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "code_version": "task-list-baseline-v1 (uncommitted source snapshot)",
+    "timestamp_utc": "2026-11-02T07:29:30.965634+00:00"
+  },
+  {
+    "name": "db-context-v1-empty-state",
+    "command": [
+      "/data/pc/competition/.venv/bin/python",
+      "context_cli.py",
+      "--store",
+      "runtime/priority-filter-999ad7111d.sqlite3",
+      "context",
+      "--task",
+      "priority-filter-999ad7111d"
+    ],
+    "cwd": "/mnt/d/ob-race/powercontext/minimax",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "code_version": "task-list-baseline-v1 (uncommitted source snapshot)",
+    "timestamp_utc": "2026-11-02T07:29:33.914672+00:00"
+  },
+  {
+    "name": "db-import-v2",
+    "command": [
+      "/data/pc/competition/.venv/bin/python",
+      "context_cli.py",
+      "--store",
+      "runtime/priority-filter-999ad7111d.sqlite3",
+      "import",
+      "--task",
+      "priority-filter-999ad7111d",
+      "--manifest",
+      "sample/manifest-v2.json"
+    ],
+    "cwd": "/mnt/d/ob-race/powercontext/minimax",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "code_version": "task-list-baseline-v1 (uncommitted source snapshot)",
+    "timestamp_utc": "2026-11-02T07:29:34.152609+00:00"
+  },
+  {
+    "name": "db-context-v2",
+    "command": [
+      "/data/pc/competition/.venv/bin/python",
+      "context_cli.py",
+      "--store",
+      "runtime/priority-filter-999ad7111d.sqlite3",
+      "context",
+      "--task",
+      "priority-filter-999ad7111d"
+    ],
+    "cwd": "/mnt/d/ob-race/powercontext/minimax",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "code_version": "task-list-baseline-v1 (uncommitted source snapshot)",
+    "timestamp_utc": "2026-11-02T07:29:36.889647+00:00"
+  },
+  {
+    "name": "powercontext-save",
+    "command": [
+      "/data/pc/competition/.venv/bin/python",
+      "context_cli.py",
+      "--store",
+      "runtime/priority-filter-999ad7111d.sqlite3",
+      "save-state",
+      "--task",
+      "priority-filter-999ad7111d",
+      "--completed",
+      "Baseline regression: 5 passed; foundation integration: 6 passed; adapter: 4 passed",
+      "--todo",
+      "Use MiniMax to implement min_priority after user API and quota are available",
+      "--verification",
+      "target-red: exit 1, five failures caused by explicit NotImplementedError"
+    ],
+    "cwd": "/mnt/d/ob-race/powercontext/minimax",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "code_version": "task-list-baseline-v1 (uncommitted source snapshot)",
+    "timestamp_utc": "2026-11-02T07:29:39.639722+00:00"
+  },
+  {
+    "name": "powercontext-resume-new-process",
+    "command": [
+      "/data/pc/competition/.venv/bin/python",
+      "context_cli.py",
+      "--store",
+      "runtime/priority-filter-999ad7111d.sqlite3",
+      "context",
+      "--task",
+      "priority-filter-999ad7111d"
+    ],
+    "cwd": "/mnt/d/ob-race/powercontext/minimax",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "code_version": "task-list-baseline-v1 (uncommitted source snapshot)",
+    "timestamp_utc": "2026-11-02T07:29:42.294455+00:00"
+  },
+  {
+    "name": "minimax-prepare-no-api",
+    "command": [
+      "/data/pc/competition/.venv/bin/python",
+      "minimax_change.py",
+      "--task",
+      "priority-filter-999ad7111d",
+      "--store",
+      "runtime/priority-filter-999ad7111d.sqlite3"
+    ],
+    "cwd": "/mnt/d/ob-race/powercontext/minimax",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "code_version": "task-list-baseline-v1 (uncommitted source snapshot)",
+    "timestamp_utc": "2026-11-02T07:29:45.239860+00:00"
+  }
+]

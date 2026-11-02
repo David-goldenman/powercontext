@@ -1,0 +1,20 @@
+{
+  "status": "FOUNDATION_VERIFIED_MODEL_PENDING",
+  "api_called": false,
+  "regression_passed": 5,
+  "context_integration_passed": 6,
+  "adapter_offline_passed": 4,
+  "target_feature_failures": 5,
+  "full_suite_exit": 1,
+  "environment_errors": 0,
+  "task": "priority-filter-415238d268",
+  "store": "runtime/priority-filter-415238d268.sqlite3",
+  "scope_id": "scp_0wn2xjqrnvx9n7tk6q7k744snb",
+  "writer_process": 1821876,
+  "reader_process": 1822022,
+  "pending": [
+    "MiniMax actual participation",
+    "Real model code diff",
+    "Same target tests GREEN after model change"
+  ]
+}

@@ -1,0 +1,15 @@
+Looking in links: _work/wheels
+Processing ./_work/wheels/pymysql-1.2.0-py3-none-any.whl (from -r requirements.txt (line 2))
+Processing ./_work/wheels/pydantic-2.13.5-py3-none-any.whl (from -r requirements.txt (line 3))
+Processing ./_work/wheels/sqlalchemy-2.0.54-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (from -r requirements.txt (line 4))
+Processing ./_work/wheels/aiosqlite-0.22.1-py3-none-any.whl (from -r requirements.txt (line 5))
+Processing ./_work/wheels/rfc8785-0.1.4-py3-none-any.whl (from -r requirements.txt (line 6))
+Processing ./_work/wheels/typing_extensions-4.16.0-py3-none-any.whl (from -r requirements.txt (line 7))
+Processing ./_work/wheels/sqlite_vec-0.1.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux1_x86_64.whl (from -r requirements.txt (line 8))
+Processing ./_work/wheels/annotated_types-0.8.0-py3-none-any.whl (from pydantic==2.13.5->-r requirements.txt (line 3))
+Processing ./_work/wheels/pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (from pydantic==2.13.5->-r requirements.txt (line 3))
+Processing ./_work/wheels/typing_inspection-0.4.4-py3-none-any.whl (from pydantic==2.13.5->-r requirements.txt (line 3))
+Processing ./_work/wheels/greenlet-3.2.5-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (from SQLAlchemy==2.0.54->-r requirements.txt (line 4))
+Installing collected packages: sqlite-vec, typing-extensions, rfc8785, PyMySQL, greenlet, annotated-types, aiosqlite, typing-inspection, SQLAlchemy, pydantic-core, pydantic
+
+Successfully installed PyMySQL-1.2.0 SQLAlchemy-2.0.54 aiosqlite-0.22.1 annotated-types-0.8.0 greenlet-3.2.5 pydantic-2.13.5 pydantic-core-2.46.5 rfc8785-0.1.4 sqlite-vec-0.1.9 typing-extensions-4.16.0 typing-inspection-0.4.4

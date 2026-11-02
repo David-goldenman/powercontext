@@ -1,0 +1,4 @@
+Collecting PyMySQL==1.2.0 (from -r requirements.txt (line 2))
+  Downloading pymysql-1.2.0-py3-none-any.whl.metadata (4.3 kB)
+ERROR: Could not find a version that satisfies the requirement pydantic==2.13.5 (from versions: none)
+ERROR: No matching distribution found for pydantic==2.13.5

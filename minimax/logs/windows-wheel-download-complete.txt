@@ -1,0 +1,28 @@
+Collecting PyMySQL==1.2.0 (from -r requirements.txt (line 2))
+  File was already downloaded d:\ob-race\powercontext\minimax\_work\wheels\pymysql-1.2.0-py3-none-any.whl
+Collecting pydantic==2.13.5 (from -r requirements.txt (line 3))
+  File was already downloaded d:\ob-race\powercontext\minimax\_work\wheels\pydantic-2.13.5-py3-none-any.whl
+Collecting SQLAlchemy==2.0.54 (from -r requirements.txt (line 4))
+  File was already downloaded d:\ob-race\powercontext\minimax\_work\wheels\sqlalchemy-2.0.54-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
+Collecting aiosqlite==0.22.1 (from -r requirements.txt (line 5))
+  File was already downloaded d:\ob-race\powercontext\minimax\_work\wheels\aiosqlite-0.22.1-py3-none-any.whl
+Collecting rfc8785==0.1.4 (from -r requirements.txt (line 6))
+  File was already downloaded d:\ob-race\powercontext\minimax\_work\wheels\rfc8785-0.1.4-py3-none-any.whl
+Collecting typing-extensions==4.16.0 (from -r requirements.txt (line 7))
+  File was already downloaded d:\ob-race\powercontext\minimax\_work\wheels\typing_extensions-4.16.0-py3-none-any.whl
+Collecting sqlite-vec==0.1.9 (from -r requirements.txt (line 8))
+  File was already downloaded d:\ob-race\powercontext\minimax\_work\wheels\sqlite_vec-0.1.9-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux1_x86_64.whl
+Collecting annotated-types==0.8.0 (from -r requirements.txt (line 10))
+  File was already downloaded d:\ob-race\powercontext\minimax\_work\wheels\annotated_types-0.8.0-py3-none-any.whl
+Collecting pydantic-core==2.46.5 (from -r requirements.txt (line 11))
+  File was already downloaded d:\ob-race\powercontext\minimax\_work\wheels\pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+Collecting typing-inspection==0.4.4 (from -r requirements.txt (line 12))
+  File was already downloaded d:\ob-race\powercontext\minimax\_work\wheels\typing_inspection-0.4.4-py3-none-any.whl
+Collecting greenlet==3.2.5 (from -r requirements.txt (line 13))
+  File was already downloaded d:\ob-race\powercontext\minimax\_work\wheels\greenlet-3.2.5-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
+Collecting PyYAML==6.0.3 (from -r requirements.txt (line 14))
+  Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+   ---------------------------------------- 807.9/807.9 kB 2.1 MB/s  0:00:00
+Saved .\_work\wheels\pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
+Successfully downloaded PyMySQL pydantic SQLAlchemy aiosqlite rfc8785 typing-extensions sqlite-vec annotated-types pydantic-core typing-inspection greenlet PyYAML

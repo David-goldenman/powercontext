@@ -1,0 +1,6 @@
+{"sources":[
+  {"kind":"spec","path":"sample/spec-v1.md","symbol":"SDD-BASE-1..3; SDD-NEW-1..4"},
+  {"kind":"code","path":"sample/tasks.py","symbol":"list_tasks"},
+  {"kind":"test","path":"tests/test_regression.py","symbol":"RegressionTests"},
+  {"kind":"test","path":"tests/test_target.py","symbol":"TargetTests"}
+]}
