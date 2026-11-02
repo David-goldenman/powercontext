@@ -27,3 +27,25 @@ memory_limit=2G，数据/日志各2G；验证后停止其容器，保留命名�
 快速关闭/切换阅读进度、同笔记串行保存、真实数据库重启持久化、SQL 输入、
 数据库故障显式报错。队列测试是代码级行为验证，浏览器端完整体验和截图仍待
 浏览器工具恢复后完成。公开站点、账号 UID 和官方20分验收尚未据此宣称完成。
+
+## 后续公开站点与材料核对
+
+2026-11-02 15:53 起，由正常 Qoder 桌面会话
+`da8b0549-6292-4e01-9baf-d41f32ee27c8` 内置 Sites 工具发布既有站点：
+<https://oceanbase-evidence-desk-g99bxzw9gge.qoder.website>。
+Sites 返回 `published: true`、`readiness: publication_completed`、
+`hasPublishedContent: true`，访问策略为 `public`。
+
+调用方独立以不带 Cookie 的 HTTP 请求取得项目 HTML；截图路径也返回
+`200`、`image/jpeg`。这证明当时匿名 HTTP 可访问；没有将它写成浏览器无痕检查。
+Qoder 内置预览的「注意力」查询显示两张证据卡、来源链接与匹配片段，
+实际截图保存在 `public/screenshots/demo.jpg`。该演示使用浏览器内存样例，
+不作为数据库后端浏览器端到端测试或真实用户效果证据。
+
+真实的发布对话截图见 `screenshots/qoder-sites-publication.jpg`；
+账号 UID 已从设置→个人资料→编辑的只读账号 ID 字段核对，见
+[ACCOUNT.md](ACCOUNT.md)。未保存邮箱或凭据。
+
+首轮 Qoder 开发在停止冒烟服务时执行了范围过宽的按进程名终止，导致浏览器
+控制工具断开；已向用户说明，后续开发恢复时完全禁用该会话的 Bash 工具。
+本记录与导出的操作证据保留真实经过。官方 Qoder 赛题20分仍待正式提交和评测。

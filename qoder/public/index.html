@@ -6,6 +6,15 @@
 <title>科研证据卡 Evidence Desk — 让每条笔记都带着出处</title>
 <meta name="description" content="面向阅读论文和课程资料的学生：导入研究笔记，检索带真实来源与匹配片段的证据卡，跟踪阅读进度。存储与查询由 seekdb（MySQL 协议）真实承载。">
 <link rel="stylesheet" href="style.css">
+<style>
+  .shot { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .shot img { display: block; width: 100%; height: auto; }
+  .shot figcaption { padding: 14px 18px; font-size: 13.5px; line-height: 1.7; color: var(--ink-2); border-top: 1px solid var(--line); }
+  .shot figcaption b { color: var(--ink); }
+  @media (max-width: 640px) {
+    .shot figcaption { padding: 12px 14px; font-size: 13px; }
+  }
+</style>
 <script src="evidence-core.js" defer></script>
 <script src="demo.js" defer></script>
 </head>
@@ -67,6 +76,19 @@
     </div>
     <div class="chips" id="chips"></div>
     <div id="results"><div class="empty">输入关键词，从 8 篇公开样例笔记中检索带来源的证据卡。</div></div>
+  </div>
+</section>
+
+<section id="screenshot">
+  <div class="wrap">
+    <h2 class="sec">已发布站点的页面实拍</h2>
+    <p class="sec-sub">下方截图取自 Qoder 内置预览，未裁剪、未修图。</p>
+    <figure class="shot">
+      <img src="screenshots/demo.jpg" alt="已发布站点中的样例演示：输入“注意力”后返回两条带来源与原文片段的证据卡，页面顶部有模拟环境提示" loading="lazy" decoding="async">
+      <figcaption>
+        说明：截图展示的是本站的<b>浏览器内存样例演示</b>（静态页面内的模拟交互），<b>不是连接 live 数据库的真实应用，也不是真实用户使用证据</b>。真实的存储、检索与阅读进度持久化见本页“本地真实体验”部分（需在本地运行 Node 服务并连接 seekdb）。
+      </figcaption>
+    </figure>
   </div>
 </section>
 

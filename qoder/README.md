@@ -7,11 +7,12 @@
 - 技术栈：Node.js LTS（内置 http，无 Web 框架）+ mysql2 + 原生 HTML/CSS/JS，全项目仅 1 个 npm 依赖
 - 诚实性设计：数据库不可用时 API 明确返回 500 错误，**绝不返回假数据或空壳成功**
 - GitHub：<https://github.com/David-goldenman/powercontext/tree/2026-competition-ecosystem/qoder>
+- 公开站点（Qoder Sites）：<https://oceanbase-evidence-desk-g99bxzw9gge.qoder.website>
 
 从干净环境部署数据库的完整命令见 [DEPLOY.md](DEPLOY.md)。已在独立的官方
 seekdb 1.4.0.0 容器中运行全套测试：34/34 通过，退出码 0；原始输出见
-[development/test-stock-seekdb.log](development/test-stock-seekdb.log)。真实开发操作记录见
-[development/qoder-session.jsonl](development/qoder-session.jsonl)，不包含模型思维链或凭据。
+[development/test-stock-seekdb.log](development/test-stock-seekdb.log)。导出的开发操作记录见
+[development/qoder-session.jsonl](development/qoder-session.jsonl)，已排除私有推理内容，不含凭据。
 
 ## 目录结构
 
@@ -111,11 +112,16 @@ npm run test:offline   # 仅不依赖数据库的 4 个文件（seekdb 离线时
 9. 打开 `http://127.0.0.1:3210/` 展示页 → 内置演示可用且页面明确标注「模拟环境、未连接数据库」。
 10. `npm test` → 五个测试文件全部通过。
 
-## Qoder Sites 发布边界
+## Qoder Sites 发布与证据
 
-- 发布物是 `public/` 静态目录：展示页含简介、痛点、核心功能、**内置公开样例的可交互演示**、GitHub 链接与本地运行说明。
+- 公开站点（2026-11-02 经 Qoder Sites 发布并验证）：<https://oceanbase-evidence-desk-g99bxzw9gge.qoder.website>
+  - 发布状态：`published: true`、`readiness: publication_completed`、`hasPublishedContent: true`；访问策略为 `public`，无需登录。
+  - siteId：`01a19b32-f2ff-7a98-881c-32ccfd725d3a`。
+  - 账号 UID：`01a19af2-af95-7eb5-9c89-3a45c46b4bc3`。2026-11-02 在 Qoder 桌面端「设置 → 个人资料 → 编辑」的只读「账号 ID」字段核对，详见 [development/ACCOUNT.md](development/ACCOUNT.md)。
+- 实际预览截图（未编辑）：[public/screenshots/demo.jpg](public/screenshots/demo.jpg)。它展示的是展示页内置的**浏览器内存样例演示**，**不是 live 数据库，也不是真实用户证据**。
+- 发布对话截图：[development/screenshots/qoder-sites-publication.jpg](development/screenshots/qoder-sites-publication.jpg)。
+- 发布物是 `public/` 静态目录：展示页含简介、痛点、核心功能、**内置公开样例的可交互演示**、已发布站点截图、GitHub 链接与本地运行说明。
 - 展示页的演示只在本机浏览器内存中运行检索逻辑（与真实后端共用同一 `evidence-core.js`），**公网静态页面并未连接任何数据库**；页面顶部有醒目提示。真实存储、进度持久化需按上文在本地运行后端 + seekdb。
-- 发布动作与最终站点 UID 由调用方使用 Qoder Sites CLI 处理。
 
 ## 已知限制
 
@@ -130,3 +136,8 @@ npm run test:offline   # 仅不依赖数据库的 4 个文件（seekdb 离线时
 ## 开发记录与测试日志
 
 见 [`DEV_LOG.md`](DEV_LOG.md)：环境检查、真实连接证据、冒烟记录的原始命令与输出均原样保留。
+
+- Qoder 会话导出记录（已排除私有推理内容）：[development/qoder-session.jsonl](development/qoder-session.jsonl)
+- 调用方独立验证记录：[development/VERIFICATION.md](development/VERIFICATION.md)
+- 官方 seekdb 1.4 容器测试原始日志：[development/test-stock-seekdb.log](development/test-stock-seekdb.log)
+- Qoder Sites 发布对话截图：[development/screenshots/qoder-sites-publication.jpg](development/screenshots/qoder-sites-publication.jpg)
