@@ -2,6 +2,21 @@
   "use strict";
   const $ = (id) => document.getElementById(id);
   const STATUS_CN = { unread: "未读", reading: "阅读中", read: "已读" };
+  let requestSequence = 0;
+  let connectionSequence = 0;
+  let databaseName = "";
+  let searchHasRun = false;
+
+  function showConnection(connected, sequence, database) {
+    if (sequence < connectionSequence) return;
+    connectionSequence = sequence;
+    if (database) databaseName = database;
+    $("dbdot").classList.toggle("up", connected);
+    $("dbdot").classList.toggle("down", !connected);
+    $("dbstate").textContent = connected
+      ? "seekdb 已连接" + (databaseName ? " · " + databaseName : "")
+      : "数据库不可用（后端会明确报错，不会返回假数据）";
+  }
 
   function esc(s) {
     return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -15,23 +30,28 @@
     return html;
   }
   async function api(path, opts) {
-    const r = await fetch(path, opts && opts.method ? opts : undefined);
+    const sequence = ++requestSequence;
+    let r;
+    try { r = await fetch(path, opts && opts.method ? opts : undefined); }
+    catch (e) { showConnection(false, sequence); throw e; }
     let data = null;
     try { data = await r.json(); } catch {}
-    if (!r.ok) throw new Error((data && data.error) || "HTTP " + r.status);
+    if (!r.ok) {
+      if (r.status >= 500) showConnection(false, sequence);
+      throw new Error((data && data.error) || "HTTP " + r.status);
+    }
+    showConnection(true, sequence, path === "/api/health" && data && data.database);
     return data;
   }
 
   // ---- 数据库健康状态 ----
   (async function health() {
     try {
-      const h = await api("/api/health");
-      $("dbdot").classList.add("up");
-      $("dbstate").textContent = "seekdb 已连接 · " + h.database;
+      await api("/api/health");
     } catch (e) {
-      $("dbdot").classList.add("down");
-      $("dbstate").textContent = "数据库不可用（后端会明确报错，不会返回假数据）";
-      $("results").innerHTML = '<div class="empty err">无法连接后端/数据库：' + esc(e.message) + "。请先运行 npm start 并确认 seekdb 在线。</div>";
+      if (!searchHasRun) {
+        $("results").innerHTML = '<div class="empty err">无法连接后端/数据库：' + esc(e.message) + "。请先运行 npm start 并确认 seekdb 在线。</div>";
+      }
     }
   })();
 
@@ -46,6 +66,7 @@
 
   // ---- 检索 ----
   function runSearch(q) {
+    searchHasRun = true;
     $("results").innerHTML = '<div class="empty">检索中…</div>';
     api("/api/search?q=" + encodeURIComponent(q))
       .then(({ cards, terms, matchedCandidates, scanned, truncated, note }) => {
@@ -63,6 +84,7 @@
         cards.forEach((c) => {
           const el = document.createElement("div");
           el.className = "evidence";
+          el.dataset.noteId = c.id;
           el.innerHTML =
             '<div><b>' + esc(c.title) + '</b><span class="status-pill ' + c.status + '">' + STATUS_CN[c.status] + '</span><span style="float:right;font-size:12.5px;color:var(--ink-2);">匹配度 ' + c.score + "</span></div>" +
             '<div class="src">来源：<a href="' + esc(c.url) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + esc(c.url) + "</a></div>" +
@@ -80,6 +102,7 @@
 
   // ---- 笔记库 ----
   let currentFilter = "";
+  let listSequence = 0;
   document.querySelectorAll("#panel-library .chip").forEach((ch) => {
     ch.onclick = () => {
       document.querySelectorAll("#panel-library .chip").forEach((x) => { x.style.borderColor = ""; x.style.color = ""; });
@@ -89,10 +112,12 @@
     };
   });
   function loadList(status) {
+    const sequence = ++listSequence;
     const box = $("list");
     box.innerHTML = '<div class="empty">加载中…</div>';
     api("/api/notes" + (status ? "?status=" + status : ""))
       .then(({ notes }) => {
+        if (sequence !== listSequence) return;
         if (!notes.length) { box.innerHTML = '<div class="empty">暂无笔记，去「导入笔记」添加，或运行 npm run seed 灌入公开样例。</div>'; return; }
         box.innerHTML = "";
         notes.forEach((n) => {
@@ -112,7 +137,22 @@
           box.appendChild(el);
         });
       })
-      .catch((e) => { box.innerHTML = '<div class="empty err">加载失败：' + esc(e.message) + "</div>"; });
+      .catch((e) => {
+        if (sequence === listSequence) box.innerHTML = '<div class="empty err">加载失败：' + esc(e.message) + "</div>";
+      });
+  }
+
+  function showSavedNote(id, patch) {
+    document.querySelectorAll("#results .evidence").forEach((el) => {
+      if (el.dataset.noteId !== id) return;
+      const pill = el.querySelector(".status-pill");
+      if (patch.status) {
+        pill.className = "status-pill " + patch.status;
+        pill.textContent = STATUS_CN[patch.status];
+      }
+      if (patch.progress !== undefined) el.querySelector(".bar i").style.width = patch.progress + "%";
+    });
+    if ($("panel-library").classList.contains("active")) loadList(currentFilter);
   }
 
   // ---- 导入 ----
@@ -153,7 +193,10 @@
       }),
     {
       debounceMs: 800,
-      onSaved: (id) => { if (reading && reading.id === id) flashSaveMsg("进度已存入数据库 ✓", false); },
+      onSaved: (id, patch) => {
+        showSavedNote(id, patch);
+        if (reading && reading.id === id) flashSaveMsg("进度已存入数据库 ✓", false);
+      },
       onFailed: (id, e) => { if (reading && reading.id === id) flashSaveMsg("保存失败：" + e.message, true); },
     }
   );
